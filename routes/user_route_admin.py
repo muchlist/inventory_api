@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
-from schemas.user import (UserRegisterSchema,
+from input_schemas.user import (UserRegisterSchema,
                           UserLoginSchema,
                           UserEditSchema)
 from flask_jwt_extended import (
@@ -16,6 +16,7 @@ from validations import role_validation as valid
 from utils.my_bcrypt import bcrypt
 from dao import (user_query,
                  user_update)
+from dto.user_dto import UserDto
 
 
 bp = Blueprint('user_admin_bp', __name__, url_prefix='/admin')
@@ -39,7 +40,6 @@ def register_user():
     if not valid.isAdmin(get_jwt_claims()):
         return {"message": "user tidak memiliki authorisasi"}, 403
 
-
     schema = UserRegisterSchema()
     try:
         data = schema.load(request.get_json())
@@ -56,7 +56,16 @@ def register_user():
         return {"message": "user tidak tersedia"}, 400
 
     # mendaftarkan ke mongodb
-    user_update.insert_user(data)
+    user_dto = UserDto(data["username"],
+                       pw_hash,
+                       data["email"],
+                       data["isAdmin"],
+                       data["isEndUser"],
+                       data["branch"])
+    try:
+        user_update.insert_user(user_dto)
+    except:
+        return {"message": "gagal menyimpan ke database"}, 500
     return {"message": "data berhasil disimpan"}, 201
 
 

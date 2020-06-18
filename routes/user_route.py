@@ -10,7 +10,7 @@ from flask_jwt_extended import (
 )
 
 from validations import role_validation as valid
-from schemas.user import (UserRegisterSchema,
+from input_schemas.user import (UserRegisterSchema,
                           UserLoginSchema,
                           UserChangePassSchema)
 from dao import (user_query,

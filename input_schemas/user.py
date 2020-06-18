@@ -6,11 +6,8 @@ class UserRegisterSchema(Schema):
     email = fields.Email(required=True)
     name = fields.Str(required=True)
     isAdmin = fields.Bool(required=True)
-    isAgent = fields.Bool(required=True)
-    isTally = fields.Bool(required=True)
-    isManager = fields.Bool(required=True)
+    isEndUser = fields.Bool(required=True)
     branch = fields.Str(required=True)
-    company = fields.Str(required=True)
 
 
 class UserEditSchema(Schema):

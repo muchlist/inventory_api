@@ -30,13 +30,12 @@ app.json_encoder = JSONEncoder
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
-    user = mongo.db.users_ak.find_one({"username": identity})
+    user = mongo.db.users.find_one({"username": identity})
     return {"name": user["name"],
             "branch": user["branch"],
             "isAdmin": user["isAdmin"],
-            "isAgent": user["isAgent"],
-            "isTally": user["isTally"],
-            "isManager": user["isManager"]}
+            "isEndUser": user["isEndUser"],
+            }
 
 
 app.register_blueprint(user_bp)
