@@ -1,5 +1,5 @@
 {
-    "mongo_uri" : "mongodb://localhost:27017/airkapal",
+    "mongo_uri" : "mongodb://localhost:27017/inventaris",
     "jwt_secret_key" : "",
     "uploaded_image_dest" : "static/images/"
 }

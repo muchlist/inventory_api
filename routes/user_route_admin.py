@@ -91,7 +91,13 @@ def put_delete_user(username):
         if not user_eksis(username):
             return {"message": f"user {username} tidak ditemukan"}, 404
 
-        user_update.update_user(username, data)
+        user_dto = UserDto(username,"",data["email"],data["isAdmin"],data["isEndUser"],data["branch"])
+
+        try:
+            user_update.update_user(user_dto)
+        except:
+            return {"message": "gagal menyimpan ke database"}, 500
+
         return {"message": f"user {username} berhasil diubah"}, 201
 
     if request.method == 'DELETE':

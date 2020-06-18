@@ -23,8 +23,8 @@ def put_password(username: str, new_password: str):
     mongo.db.users.update_one(query, update)
 
 
-def update_user(username: str, data: UserDto):
-    find = {"username": username}
+def update_user(data: UserDto):
+    find = {"username": data.username}
     update = {
         "name": data.name.upper(),
         "email": data.email,

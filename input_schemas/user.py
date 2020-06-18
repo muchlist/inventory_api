@@ -11,14 +11,13 @@ class UserRegisterSchema(Schema):
 
 
 class UserEditSchema(Schema):
+    password = fields.Str(required=True)
     email = fields.Email(required=True)
-    isAdmin = fields.Bool(required=True)
     name = fields.Str(required=True)
-    isAgent = fields.Bool(required=True)
-    isTally = fields.Bool(required=True)
-    isManager = fields.Bool(required=True)
+    isAdmin = fields.Bool(required=True)
+    isEndUser = fields.Bool(required=True)
     branch = fields.Str(required=True)
-    company = fields.Str(required=True)
+
 
 class UserLoginSchema(Schema):
     username = fields.Str(required=True)
