@@ -54,11 +54,8 @@ def login_user():
         'access_token': access_token,
         'name': user['name'],
         'isAdmin': user['isAdmin'],
-        'isTally': user['isTally'],
-        'isManager': user['isManager'],
-        'isAgent': user['isAgent'],
+        'isEndUser': user['isEndUser'],
         "branch": user["branch"],
-        "company": user["company"],
     }, 200
 
     return response
