@@ -58,14 +58,16 @@ def register_user():
     # mendaftarkan ke mongodb
     user_dto = UserDto(data["username"],
                        pw_hash,
+                       data["name"],
                        data["email"],
                        data["isAdmin"],
                        data["isEndUser"],
                        data["branch"])
-    try:
-        user_update.insert_user(user_dto)
-    except:
-        return {"message": "gagal menyimpan ke database"}, 500
+    # try:
+    #     user_update.insert_user(user_dto)
+    # except:
+    #     return {"message": "gagal menyimpan ke database"}, 500
+    user_update.insert_user(user_dto)
     return {"message": "data berhasil disimpan"}, 201
 
 
