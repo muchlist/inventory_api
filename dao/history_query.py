@@ -1,11 +1,29 @@
 from databases.db import mongo
 
 
-def find_query_for_parent(parent_id: str) -> list:
+def find_history_for_parent(parent_id: str) -> list:
 
-    find = {"parent_id": parent_id}
+    filter = {"parent_id": parent_id}
+    histories_coll = mongo.db.histories.find(filter).sort("updated_at", -1)
     histories = []
-    histories_coll = mongo.db.histories.find(find).sort({"updated_at": -1})
     for history in histories_coll:
         histories.append(history)
+
+    return histories
+
+
+def find_histories_by_branch_by_category(branch: str, category: str) -> list:
+
+    filter = {}
+    if branch:
+        find["branch"] = branch.upper()
+    if category:
+        find["category"] = category.upper()
+
+    histories_coll = mongo.db.histories.find(
+        filter).sort("updated_at", -1).limit(100)
+    histories = []
+    for history in histories_coll:
+        histories.append(history)
+
     return histories

@@ -17,12 +17,12 @@ bp = Blueprint('history_bp', __name__, url_prefix='/api')
 
 """
 ------------------------------------------------------------------------------
-
+Membuat dan mengambil Histories per parent
 ------------------------------------------------------------------------------
 """
-@bp.route("/histories", methods=['GET', 'POST'])
+@bp.route("/histories/<parent_id>", methods=['GET', 'POST'])
 @jwt_required
-def insert_history(name):
+def insert_history(parent_id):
 
     claims = get_jwt_claims()
 
@@ -33,22 +33,52 @@ def insert_history(name):
         except ValidationError as err:
             return err.messages, 400
 
-        if data["time"] is not None:
-            data["time"] = datetime.now()
+        if data["date"] is None:
+            data["date"] = datetime.now()
+        data["branch"] = claims["branch"]
+        data["author"] = claims["name"]
+        data["parent_id"] = parent_id
 
         history_dto = HistoryDto(data["parent_id"],
                                  data["category"],
-                                 claims["name"],
-                                 claims["branch"],
+                                 data["author"],
+                                 data["branch"],
                                  data["status"],
                                  data["note"],
-                                 datetime.now())
+                                 data["date"])
 
         try:
             history_update.insert_history(history_dto)
         except:
             return {"message": "Gagal menyimpan data ke database"}, 500
-        return {"message": "history berhasil dimasukkan"}, 201
+        return jsonify(data), 201
 
     if request.method == 'GET':
-        return {"message": "implement me"}, 200
+        try:
+            histories = history_query.find_history_for_parent(parent_id)
+        except:
+            return {"message": "Gagal memanggil data dari database"}, 500
+
+        return {"histories": histories}, 200
+
+
+"""
+------------------------------------------------------------------------------
+mengambil history per cabang dan per kategory
+api.com/histories?category=PC&branch=BAGENDANG
+------------------------------------------------------------------------------
+"""
+@bp.route("/histories/", methods=['GET'])
+@jwt_required
+def insert_history():
+
+    claims = get_jwt_claims()
+    category = request.args.get("category")
+    branch = request.args.get("branch")
+
+    try:
+        histories = history_query.find_histories_by_branch_by_category(branch , category)
+    except:
+        return {"message": "Gagal memanggil data dari database"}, 500
+
+    return {"histories": histories}, 200

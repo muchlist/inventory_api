@@ -34,11 +34,11 @@ register
 ------------------------------------------------------------------------------
 """
 @bp.route('/register', methods=['POST'])
-@jwt_required
+# @jwt_required
 def register_user():
 
-    if not valid.isAdmin(get_jwt_claims()):
-        return {"message": "user tidak memiliki authorisasi"}, 403
+    # if not valid.isAdmin(get_jwt_claims()):
+    #     return {"message": "user tidak memiliki authorisasi"}, 403
 
     schema = UserRegisterSchema()
     try:

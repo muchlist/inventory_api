@@ -11,7 +11,6 @@ class UserRegisterSchema(Schema):
 
 
 class UserEditSchema(Schema):
-    password = fields.Str(required=True)
     email = fields.Email(required=True)
     name = fields.Str(required=True)
     isAdmin = fields.Bool(required=True)
