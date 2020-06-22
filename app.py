@@ -13,6 +13,7 @@ from dao.user_query import get_one_without_password
 from routes.user_route import bp as user_bp
 from routes.user_route_admin import bp as user_bp_admin
 from routes.history_route import bp as history_bp
+from routes.computer_route import bp as computer_bp
 
 
 app = Flask(__name__)
@@ -43,7 +44,7 @@ def add_claims_to_jwt(identity):
 app.register_blueprint(user_bp)
 app.register_blueprint(user_bp_admin)
 app.register_blueprint(history_bp)
-# app.register_blueprint(vessel_bp)
+app.register_blueprint(computer_bp)
 # app.register_blueprint(water_bp)
 # app.register_blueprint(water_approval_bp)
 # app.register_blueprint(tonase_admin_bp)

@@ -40,6 +40,7 @@ def insert_history(parent_id):
         data["parent_id"] = parent_id
 
         history_dto = HistoryDto(data["parent_id"],
+                                 data["parent_name"],
                                  data["category"],
                                  data["author"],
                                  data["branch"],
@@ -70,7 +71,7 @@ api.com/histories?category=PC&branch=BAGENDANG
 """
 @bp.route("/histories/", methods=['GET'])
 @jwt_required
-def insert_history():
+def get_history():
 
     claims = get_jwt_claims()
     category = request.args.get("category")

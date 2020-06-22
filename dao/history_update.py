@@ -5,6 +5,7 @@ from dto.history_dto import HistoryDto
 def insert_history(data: HistoryDto):
     data_insert = {
         "parent_id": data.parent_id,
+        "parent_name": data.parent_name,
         "category": data.category.upper(),
         "author": data.author.upper(),
         "branch": data.branch.upper(),
