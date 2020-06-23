@@ -9,11 +9,16 @@ def get_computer(id: str) -> dict:
     return mongo.db.computer.find_one(filter)
 
 
-def find_computer_by_branch_ip_clientname(branch: str, ip_address: str, client_name: str) -> list:
+def find_computer_by_branch_ip_clientname(branch: str, ip_address: str, client_name: str, deactive: str) -> list:
 
     filter = {}
     if branch:
         filter["branch"] = branch
+    if deactive:
+        if deactive == "yes":
+            filter["deactive"] = True
+        elif deactive == "no":
+            filter["deactive"] = False
     if ip_address:
         filter["ip_address"] = ip_address
     if client_name:

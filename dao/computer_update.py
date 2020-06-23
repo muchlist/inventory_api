@@ -1,5 +1,7 @@
 from databases.db import mongo
-from dto.computer_dto import ComputerDto, SpecDto
+from bson.objectid import ObjectId
+from dto.computer_dto import ComputerDto, SpecDto, ComputerEditDto
+from datetime import datetime
 
 
 def create_computer(data: ComputerDto) -> dict:
@@ -28,6 +30,7 @@ def create_computer(data: ComputerDto) -> dict:
         "operation_system": data.operation_system,
         "last_status": data.last_status,
         "note": data.note,
+        "deactive": data.deactive,
         "spec": spec_embed
     }
 
@@ -35,4 +38,46 @@ def create_computer(data: ComputerDto) -> dict:
 
     return data_insert
 
+def update_computer(data: ComputerEditDto) -> dict:
+
+    find = {
+        "_id": ObjectId(data.filter_id),
+        "branch": data.filter_branch,
+        "updated_at": data.filter_timestamp,
+    }
+    update = {
+        "updated_at": data.updated_at,
+        "client_name": data.client_name.upper(),
+        "hostname": data.hostname,
+        "ip_address": data.ip_address,
+        "inventory_number": data.inventory_number,
+        "author": data.author,
+        "location": data.location,
+        "division": data.division,
+        "seat_management": data.seat_management,
+        "year": data.year,
+        "merk": data.merk,
+        "operation_system": data.operation_system,
+        "note": data.note,
+        "deactive": data.deactive,
+        "spec.processor": data.spec.processor,
+        "spec.ram": data.spec.ram,
+        "spec.hardisk": data.spec.hardisk,
+        "spec.score": data.spec.score,
+    }
+
+    computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
+    return computer
+
+
+def delete_computer(computer_id: str, branch: str, time_limit: datetime) -> dict:
+
+    find = {
+        "_id": ObjectId(computer_id),
+        "branch": branch,
+        "created_at": {'$gte': time_limit},
+    }
+
+    computer = mongo.db.computer.find_one_and_delete(find)
+    return computer
 
