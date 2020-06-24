@@ -3,7 +3,7 @@ from typing import NamedTuple
 
 
 class SpecDto(NamedTuple):
-    processor: int
+    processor: str
     ram: int
     hardisk: int
     score: int

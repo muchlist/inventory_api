@@ -1,3 +1,4 @@
 import json
 
-config = json.load(open('config.json'))
+with open('config.json') as d:
+    config = json.load(d)

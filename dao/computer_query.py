@@ -4,27 +4,27 @@ from databases.db import mongo
 
 
 def get_computer(id: str) -> dict:
-    filter = {
+    find_filter = {
         '_id': ObjectId(id),
     }
-    return mongo.db.computer.find_one(filter)
+    return mongo.db.computer.find_one(find_filter)
 
 
 def find_computer_by_branch_ip_clientname(branch: str, ip_address: str, client_name: str, deactive: str) -> list:
-    filter = {}
+    find_filter = {}
     if branch:
-        filter["branch"] = branch.upper()
+        find_filter["branch"] = branch.upper()
     if deactive:
         if deactive == "yes":
-            filter["deactive"] = True
+            find_filter["deactive"] = True
         elif deactive == "no":
-            filter["deactive"] = False
+            find_filter["deactive"] = False
     if ip_address:
-        filter["ip_address"] = ip_address
+        find_filter["ip_address"] = ip_address
     if client_name:
-        filter["client_name"] = {'$regex': f'.*{client_name.upper()}.*'}
+        find_filter["client_name"] = {'$regex': f'.*{client_name.upper()}.*'}
 
-    computer_coll = mongo.db.computer.find(filter).sort(
+    computer_coll = mongo.db.computer.find(find_filter).sort(
         [("division", 1), ("client_name", 1)])
     computers = []
     for computer in computer_coll:
