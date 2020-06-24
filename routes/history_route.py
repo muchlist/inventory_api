@@ -1,29 +1,29 @@
+from datetime import datetime
+
 from flask import Blueprint, request, jsonify
-from marshmallow import ValidationError
 from flask_jwt_extended import (
-    get_jwt_identity,
     jwt_required,
     get_jwt_claims,
 )
-from input_schemas.history import (HistoryInsertSchema)
+from marshmallow import ValidationError
+
 from dao import (history_query,
                  history_update)
 from dto.history_dto import HistoryDto
-
-from datetime import datetime
+from input_schemas.history import (HistoryInsertSchema)
 
 bp = Blueprint('history_bp', __name__, url_prefix='/api')
-
 
 """
 ------------------------------------------------------------------------------
 Membuat dan mengambil Histories per parent
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/histories/<parent_id>", methods=['GET', 'POST'])
 @jwt_required
 def insert_history(parent_id):
-
     claims = get_jwt_claims()
 
     if request.method == 'POST':
@@ -69,16 +69,20 @@ mengambil history per cabang dan per kategory
 api.com/histories?category=PC&branch=BAGENDANG
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/histories/", methods=['GET'])
 @jwt_required
 def get_history():
-
     claims = get_jwt_claims()
+
     category = request.args.get("category")
-    branch = request.args.get("branch")
+    branch = claims["branch"]
+    if request.args.get("branch"):
+        branch = request.args.get("branch")
 
     try:
-        histories = history_query.find_histories_by_branch_by_category(branch , category)
+        histories = history_query.find_histories_by_branch_by_category(branch, category)
     except:
         return {"message": "Gagal memanggil data dari database"}, 500
 

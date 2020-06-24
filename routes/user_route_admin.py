@@ -1,23 +1,19 @@
-from datetime import timedelta
-
-from flask import Blueprint, request, jsonify
-from marshmallow import ValidationError
-from input_schemas.user import (UserRegisterSchema,
-                          UserLoginSchema,
-                          UserEditSchema)
+from flask import Blueprint, request
 from flask_jwt_extended import (
-    create_access_token,
-    get_jwt_identity,
+
     jwt_required,
     get_jwt_claims,
 )
+from marshmallow import ValidationError
 
-from validations import role_validation as valid
-from utils.my_bcrypt import bcrypt
 from dao import (user_query,
                  user_update)
 from dto.user_dto import UserDto
+from input_schemas.user import (UserRegisterSchema,
 
+                                UserEditSchema)
+from utils.my_bcrypt import bcrypt
+from validations import role_validation as valid
 
 bp = Blueprint('user_admin_bp', __name__, url_prefix='/admin')
 
@@ -33,10 +29,11 @@ def user_eksis(username):
 register
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route('/register', methods=['POST'])
 # @jwt_required
 def register_user():
-
     # if not valid.isAdmin(get_jwt_claims()):
     #     return {"message": "user tidak memiliki authorisasi"}, 403
 
@@ -76,10 +73,11 @@ def register_user():
 Merubah dan mendelete user
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route('/users/<string:username>', methods=['PUT', 'DELETE'])
 @jwt_required
 def put_delete_user(username):
-
     if not valid.isAdmin(get_jwt_claims()):
         return {"message": "user tidak memiliki authorisasi"}, 403
 
@@ -93,7 +91,7 @@ def put_delete_user(username):
         if not user_eksis(username):
             return {"message": f"user {username} tidak ditemukan"}, 404
 
-        user_dto = UserDto(username,"",data["email"],data["isAdmin"],data["isEndUser"],data["branch"])
+        user_dto = UserDto(username, "", data["email"], data["isAdmin"], data["isEndUser"], data["branch"])
 
         try:
             user_update.update_user(user_dto)
@@ -115,10 +113,11 @@ def put_delete_user(username):
 Reset Password
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route('/reset/<string:username>', methods=['GET'])
 @jwt_required
 def reset_password_by_admin(username):
-
     if not valid.isAdmin(get_jwt_claims()):
         return {"message": "user tidak memiliki authorisasi"}, 403
 

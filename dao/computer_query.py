@@ -1,5 +1,6 @@
-from databases.db import mongo
 from bson.objectid import ObjectId
+
+from databases.db import mongo
 
 
 def get_computer(id: str) -> dict:
@@ -10,10 +11,9 @@ def get_computer(id: str) -> dict:
 
 
 def find_computer_by_branch_ip_clientname(branch: str, ip_address: str, client_name: str, deactive: str) -> list:
-
     filter = {}
     if branch:
-        filter["branch"] = branch
+        filter["branch"] = branch.upper()
     if deactive:
         if deactive == "yes":
             filter["deactive"] = True

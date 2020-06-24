@@ -1,9 +1,9 @@
 import os
 import re
-from werkzeug.datastructures import FileStorage
 from typing import Union
 
 from flask_uploads import UploadSet, IMAGES
+from werkzeug.datastructures import FileStorage
 
 IMAGE_SET = UploadSet("images", IMAGES)  # set name and allowed extentions
 

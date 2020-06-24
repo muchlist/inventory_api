@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields
 
+
 class HistoryInsertSchema(Schema):
     parent_name = fields.Str(required=True)
     category = fields.Str(required=True)

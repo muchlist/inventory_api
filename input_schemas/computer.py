@@ -19,6 +19,7 @@ class ComputerInsertSchema(Schema):
     hardisk = fields.Int(required=True)
     deactive = fields.Bool(required=True)
 
+
 class ComputerEditSchema(Schema):
     client_name = fields.Str(required=True)
     hostname = fields.Str(required=True)

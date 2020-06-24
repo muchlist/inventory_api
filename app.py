@@ -1,20 +1,18 @@
-from config import config as cf
 from flask import Flask
-from flask import Blueprint
 from flask_jwt_extended import JWTManager
 from flask_uploads import configure_uploads, patch_request_class
 
-from databases.db import mongo
-from utils.my_encoder import JSONEncoder
-from utils.my_bcrypt import bcrypt
-from utils.image_helper import IMAGE_SET
-
+from config import config as cf
 from dao.user_query import get_one_without_password
+from databases.db import mongo
+from routes.computer_route import bp as computer_bp
+from routes.history_route import bp as history_bp
 from routes.user_route import bp as user_bp
 from routes.user_route_admin import bp as user_bp_admin
-from routes.history_route import bp as history_bp
-from routes.computer_route import bp as computer_bp
-
+from routes.option_route import bp as option_bp
+from utils.image_helper import IMAGE_SET
+from utils.my_bcrypt import bcrypt
+from utils.my_encoder import JSONEncoder
 
 app = Flask(__name__)
 
@@ -45,7 +43,7 @@ app.register_blueprint(user_bp)
 app.register_blueprint(user_bp_admin)
 app.register_blueprint(history_bp)
 app.register_blueprint(computer_bp)
-# app.register_blueprint(water_bp)
+app.register_blueprint(option_bp)
 # app.register_blueprint(water_approval_bp)
 # app.register_blueprint(tonase_admin_bp)
 # app.register_blueprint(image_bp)

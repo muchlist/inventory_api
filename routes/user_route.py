@@ -1,36 +1,32 @@
 from datetime import timedelta
 
 from flask import Blueprint, request, jsonify
-from marshmallow import ValidationError
 from flask_jwt_extended import (
     create_access_token,
     get_jwt_identity,
     jwt_required,
-    get_jwt_claims,
 )
+from marshmallow import ValidationError
 
-from validations import role_validation as valid
-from input_schemas.user import (UserRegisterSchema,
-                          UserLoginSchema,
-                          UserChangePassSchema)
 from dao import (user_query,
                  user_update)
+from input_schemas.user import (UserLoginSchema,
+                                UserChangePassSchema)
 from utils.my_bcrypt import bcrypt
-
 
 bp = Blueprint('user_bp', __name__)
 
 EXPIRED_TOKEN = 15
-
 
 """
 ------------------------------------------------------------------------------
 login
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route('/login', methods=['POST'])
 def login_user():
-
     schema = UserLoginSchema()
     try:
         data = schema.load(request.get_json())
@@ -51,12 +47,12 @@ def login_user():
         fresh=True)
 
     response = {
-        'access_token': access_token,
-        'name': user['name'],
-        'isAdmin': user['isAdmin'],
-        'isEndUser': user['isEndUser'],
-        "branch": user["branch"],
-    }, 200
+                   'access_token': access_token,
+                   'name': user['name'],
+                   'isAdmin': user['isAdmin'],
+                   'isEndUser': user['isEndUser'],
+                   "branch": user["branch"],
+               }, 200
 
     return response
 
@@ -66,6 +62,8 @@ def login_user():
 Detail user by username
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/users/<string:username>", methods=['GET'])
 @jwt_required
 def user(username):
@@ -78,11 +76,13 @@ def user(username):
 Detail user by name
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/getuser/<name>", methods=['GET'])
 @jwt_required
 def user_by_name(name):
-    user_list = user_query.get_many_by_name(name)
-    return {"users": user_list}, 200
+    users = user_query.get_many_by_name(name)
+    return {"users": users}, 200
 
 
 """
@@ -90,6 +90,8 @@ def user_by_name(name):
 Detail user by self profil
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/profile", methods=['GET'])
 @jwt_required
 def show_profile():
@@ -102,12 +104,14 @@ def show_profile():
 List User
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/users", methods=['GET'])
 @jwt_required
 def user_list():
-    user_list = user_query.get_many()
+    users = user_query.get_many()
 
-    return jsonify(user_list), 200
+    return jsonify(users), 200
 
 
 """
@@ -115,6 +119,8 @@ def user_list():
 Self Change Password
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route('/change-password', methods=['POST'])
 @jwt_required
 def change_password():
@@ -145,6 +151,8 @@ def change_password():
 Mengembalikan list semua company/agent
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route('/companies', methods=['GET'])
 @jwt_required
 def get_agent_list():

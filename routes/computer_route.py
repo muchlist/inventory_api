@@ -1,37 +1,35 @@
+from datetime import datetime, timedelta
+
+from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify
-from marshmallow import ValidationError
 from flask_jwt_extended import (
-    get_jwt_identity,
     jwt_required,
     get_jwt_claims,
 )
-from input_schemas.computer import (ComputerInsertSchema, ComputerEditSchema)
-from bson.objectid import ObjectId
-
+from marshmallow import ValidationError
 
 from dao import (computer_query,
                  computer_update,
                  history_update)
 from dto.computer_dto import ComputerDto, SpecDto, ComputerEditDto
 from dto.history_dto import HistoryDto
-from validations.role_validation import isEndUser
+from input_schemas.computer import (ComputerInsertSchema, ComputerEditSchema)
 from validations.input_validation import is_ip_address_valid
-
-from datetime import datetime, timedelta
+from validations.role_validation import isEndUser
 
 bp = Blueprint('computer_bp', __name__, url_prefix='/api')
 
-
 """
 ------------------------------------------------------------------------------
-List komputer localhost:5001/computers?ip_address=?client_name=?deactive=
+List komputer localhost:5001/computers?branch=&ip_address=?client_name=?deactive=
 dan Membuat Komputer
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/computers", methods=['GET', 'POST'])
 @jwt_required
 def find_computers():
-
     claims = get_jwt_claims()
 
     if request.method == 'POST':
@@ -72,8 +70,8 @@ def find_computers():
             operation_system=data["operation_system"],
             last_status="INIT",
             note=data["note"],
-            active=data["active"],
-            spec=spec_dto,
+            deactive=data["active"],
+            spec=spec_dto
         )
 
         try:
@@ -84,13 +82,16 @@ def find_computers():
         return jsonify(result), 201
 
     if request.method == 'GET':
-
         ip_address = request.args.get("ip_address")
         client_name = request.args.get("client_name")
         deactive = request.args.get("deactive")
+        branch = claims["branch"]
+
+        if request.args.get("branch"):
+            branch = request.args.get("branch")
 
         computers = computer_query.find_computer_by_branch_ip_clientname(
-            claims["branch"], ip_address, client_name, deactive)
+            branch, ip_address, client_name, deactive)
 
         return {"computers": computers}, 200
 
@@ -100,10 +101,11 @@ def find_computers():
 Detail komputer localhost:5001/computers/objectID
 ------------------------------------------------------------------------------
 """
+
+
 @bp.route("/computers/<computer_id>", methods=['GET', 'PUT', 'DELETE'])
 @jwt_required
 def detail_computers(computer_id):
-
     if not ObjectId.is_valid(computer_id):
         return {"message": "Object ID tidak valid"}, 400
 
@@ -160,7 +162,7 @@ def detail_computers(computer_id):
             merk=data["merk"],
             operation_system=data["operation_system"],
             note=data["note"],
-            active=data["active"],
+            deactive=data["active"],
             spec=spec_dto,
         )
 
@@ -173,12 +175,12 @@ def detail_computers(computer_id):
             return {"message": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
 
         history_dto = HistoryDto(result["_id"],
-                                 result["client_name"], 
+                                 result["client_name"],
                                  result["tipe"],
-                                 claims["name"], 
-                                 result["branch"], 
-                                 "EDITED", 
-                                 "Detail komputer dirubah", 
+                                 claims["name"],
+                                 result["branch"],
+                                 "EDITED",
+                                 "Detail komputer dirubah",
                                  datetime.now())
         history_update.insert_history(history_dto)
 

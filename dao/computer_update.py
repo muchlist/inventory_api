@@ -1,11 +1,12 @@
-from databases.db import mongo
-from bson.objectid import ObjectId
-from dto.computer_dto import ComputerDto, SpecDto, ComputerEditDto
 from datetime import datetime
+
+from bson.objectid import ObjectId
+
+from databases.db import mongo
+from dto.computer_dto import ComputerDto, ComputerEditDto
 
 
 def create_computer(data: ComputerDto) -> dict:
-
     spec_embed = {
         "processor": data.spec.processor,
         "ram": data.spec.ram,
@@ -38,8 +39,8 @@ def create_computer(data: ComputerDto) -> dict:
 
     return data_insert
 
-def update_computer(data: ComputerEditDto) -> dict:
 
+def update_computer(data: ComputerEditDto) -> dict:
     find = {
         "_id": ObjectId(data.filter_id),
         "branch": data.filter_branch,
@@ -71,7 +72,6 @@ def update_computer(data: ComputerEditDto) -> dict:
 
 
 def delete_computer(computer_id: str, branch: str, time_limit: datetime) -> dict:
-
     find = {
         "_id": ObjectId(computer_id),
         "branch": branch,
@@ -80,4 +80,3 @@ def delete_computer(computer_id: str, branch: str, time_limit: datetime) -> dict
 
     computer = mongo.db.computer.find_one_and_delete(find)
     return computer
-
