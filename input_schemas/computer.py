@@ -30,6 +30,7 @@ class ComputerEditSchema(Schema):
     seat_management = fields.Bool(required=True)
     year = fields.DateTime(required=True)
     merk = fields.Str(required=True)
+    tipe = fields.Str(required=True)
     operation_system = fields.Str(required=True)
     note = fields.Str(required=True)
     processor = fields.Str(required=True)

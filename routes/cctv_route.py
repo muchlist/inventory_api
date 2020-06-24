@@ -8,33 +8,33 @@ from flask_jwt_extended import (
 )
 from marshmallow import ValidationError
 
-from dao import (computer_query,
-                 computer_update,
+from dao import (cctv_query,
+                 cctv_update,
                  history_update)
-from dto.computer_dto import ComputerDto, SpecDto, ComputerEditDto
+from dto.cctv_dto import CctvDto, CctvEditDto
 from dto.history_dto import HistoryDto
-from input_schemas.computer import (ComputerInsertSchema, ComputerEditSchema)
+from input_schemas.cctv import (CctvInsertSchema, CctvEditSchema)
 from validations.input_validation import is_ip_address_valid
 from validations.role_validation import isEndUser
 
-bp = Blueprint('computer_bp', __name__, url_prefix='/api')
+bp = Blueprint('cctv_bp', __name__, url_prefix='/api')
 
 """
 ------------------------------------------------------------------------------
-List komputer localhost:5001/computers?branch=&ip_address=?client_name=?deactive=
-dan Membuat Komputer
+List cctv localhost:5001/cctv?branch=&ip_address=?cctv_name=?deactive=
+dan Membuat Cctv
 ------------------------------------------------------------------------------
 """
 
 
-@bp.route("/computers", methods=['GET', 'POST'])
+@bp.route("/cctvs", methods=['GET', 'POST'])
 @jwt_required
-def find_computers():
+def find_cctv():
     claims = get_jwt_claims()
 
     if request.method == 'POST':
 
-        schema = ComputerInsertSchema()
+        schema = CctvInsertSchema()
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
@@ -45,37 +45,26 @@ def find_computers():
         if not is_ip_address_valid(data["ip_address"]):
             return {"message": "IP Address salah"}, 400
 
-        spec_dto = SpecDto(
-            processor=data["processor"],
-            ram=data["ram"],
-            hardisk=data["hardisk"],
-            score=0,
-        )
-
-        computer_dto = ComputerDto(
+        cctv_dto = CctvDto(
             created_at=datetime.now(),
             updated_at=datetime.now(),
-            client_name=data["client_name"],
-            hostname=data["hostname"],
+            cctv_name=data["cctv_name"],
             ip_address=data["ip_address"],
             inventory_number=data["inventory_number"],
             author=claims["name"],
             branch=claims["branch"],
             location=data["location"],
-            division=data["division"],
-            seat_management=data["seat_management"],
             year=data["year"],
             merk=data["merk"],
             tipe=data["tipe"],
-            operation_system=data["operation_system"],
             last_status="INIT",
             note=data["note"],
             deactive=data["deactive"],
-            spec=spec_dto
+            ping_state=[]
         )
 
         try:
-            result = computer_update.create_computer(computer_dto)
+            result = cctv_update.create_cctv(cctv_dto)
         except:
             return {"message": "Gagal menyimpan data ke database"}, 500
 
@@ -83,17 +72,17 @@ def find_computers():
 
     if request.method == 'GET':
         ip_address = request.args.get("ip_address")
-        client_name = request.args.get("client_name")
+        cctv_name = request.args.get("cctv_name")
         deactive = request.args.get("deactive")
         branch = claims["branch"]
 
         if request.args.get("branch"):
             branch = request.args.get("branch")
 
-        computers = computer_query.find_computer_by_branch_ip_clientname(
-            branch, ip_address, client_name, deactive)
+        cctvs = cctv_query.find_cctv_by_branch_ip_cctv_name(
+            branch, ip_address, cctv_name, deactive)
 
-        return {"computers": computers}, 200
+        return {"cctvs": cctvs}, 200
 
 
 """
@@ -103,10 +92,10 @@ Detail komputer localhost:5001/computers/objectID
 """
 
 
-@bp.route("/computers/<computer_id>", methods=['GET', 'PUT', 'DELETE'])
+@bp.route("/cctvs/<cctv_id>", methods=['GET', 'PUT', 'DELETE'])
 @jwt_required
-def detail_computers(computer_id):
-    if not ObjectId.is_valid(computer_id):
+def detail_cctvs(cctv_id):
+    if not ObjectId.is_valid(cctv_id):
         return {"message": "Object ID tidak valid"}, 400
 
     claims = get_jwt_claims()
@@ -114,17 +103,17 @@ def detail_computers(computer_id):
     if request.method == 'GET':
 
         try:
-            computer = computer_query.get_computer(computer_id)
+            cctv = cctv_query.get_cctv(cctv_id)
         except:
             return {"message": "Gagal mengambil data dari database"}, 500
 
-        if computer is None:
-            return {"message": "Komputer dengan ID tersebut tidak ditemukan"}, 404
+        if cctv is None:
+            return {"message": "Cctv dengan ID tersebut tidak ditemukan"}, 404
 
-        return jsonify(computer), 200
+        return jsonify(cctv), 200
 
     if request.method == 'PUT':
-        schema = ComputerEditSchema()
+        schema = CctvEditSchema()
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
@@ -137,38 +126,26 @@ def detail_computers(computer_id):
 
         data["score"] = 0
 
-        spec_dto = SpecDto(
-            processor=data["processor"],
-            ram=data["ram"],
-            hardisk=data["hardisk"],
-            score=data["score"],
-        )
-
-        computer_edit_dto = ComputerEditDto(
-            filter_id=computer_id,
+        cctv_edit_dto = CctvEditDto(
+            filter_id=cctv_id,
             filter_timestamp=data["timestamp"],
             filter_branch=claims["branch"],
 
             updated_at=datetime.now(),
-            client_name=data["client_name"],
-            hostname=data["hostname"],
+            cctv_name=data["cctv_name"],
             ip_address=data["ip_address"],
             inventory_number=data["inventory_number"],
             author=claims["name"],
             location=data["location"],
-            division=data["division"],
-            seat_management=data["seat_management"],
             year=data["year"],
             merk=data["merk"],
             tipe=data["tipe"],
-            operation_system=data["operation_system"],
             note=data["note"],
-            deactive=data["deactive"],
-            spec=spec_dto,
+            deactive=data["deactive"]
         )
 
         try:
-            result = computer_update.update_computer(computer_edit_dto)
+            result = cctv_update.update_cctv(cctv_edit_dto)
         except:
             return {"message": "Gagal menyimpan data ke database"}, 500
 
@@ -176,12 +153,12 @@ def detail_computers(computer_id):
             return {"message": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
 
         history_dto = HistoryDto(result["_id"],
-                                 result["client_name"],
-                                 "PC",
+                                 result["cctv_name"],
+                                 "CCTV",
                                  claims["name"],
                                  result["branch"],
                                  "EDITED",
-                                 "Detail komputer dirubah",
+                                 "Detail cctv dirubah",
                                  datetime.now())
         history_update.insert_history(history_dto)
 
@@ -193,12 +170,12 @@ def detail_computers(computer_id):
         time_limit = datetime.now() - timedelta(hours=2)
 
         try:
-            computer = computer_update.delete_computer(
-                computer_id, claims["branch"], time_limit)
+            cctv = cctv_update.delete_cctv(
+                cctv_id, claims["branch"], time_limit)
         except:
             return {"message": "Gagal mengambil data dari database"}, 500
 
-        if computer is None:
-            return {"message": "gagal menghapus komputer, batas waktu hanya dua jam setelah pembuatan"}, 400
+        if cctv is None:
+            return {"message": "gagal menghapus cctv, hanya dapat dihapus dua jam setelah pembuatan"}, 400
 
-        return {"message": "komputer berhasil di hapus"}, 204
+        return {"message": "cctv berhasil di hapus"}, 204

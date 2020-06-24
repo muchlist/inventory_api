@@ -1,54 +1,44 @@
 from datetime import datetime
-from typing import NamedTuple
+from typing import NamedTuple, List
 
 
-class SpecDto(NamedTuple):
-    processor: str
-    ram: int
-    hardisk: int
-    score: int
+class PingState(NamedTuple):
+    time_second: float
+    time_date: datetime
+    status: str
 
 
-class ComputerDto(NamedTuple):
+class CctvDto(NamedTuple):
     created_at: datetime
     updated_at: datetime
-    client_name: str
-    hostname: str  # = "1" untuk default
+    cctv_name: str
     ip_address: str
     inventory_number: str
     author: str
     branch: str
     location: str
-    division: str
-    seat_management: bool
     year: datetime
     merk: str
     tipe: str
-    operation_system: str
     last_status: str
     note: str
     deactive: bool
-    spec: SpecDto
+    ping_state: List[PingState]
 
 
-class ComputerEditDto(NamedTuple):
+class CctvEditDto(NamedTuple):
     filter_id: str
     filter_timestamp: datetime
     filter_branch: str
 
     updated_at: datetime
-    client_name: str
-    hostname: str
+    cctv_name: str
     ip_address: str
     inventory_number: str
     author: str
     location: str
-    division: str
-    seat_management: bool
     year: datetime
     merk: str
     tipe: str
-    operation_system: str
     note: str
     deactive: bool
-    spec: SpecDto

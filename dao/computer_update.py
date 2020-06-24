@@ -58,6 +58,7 @@ def update_computer(data: ComputerEditDto) -> dict:
         "seat_management": data.seat_management,
         "year": data.year,
         "merk": data.merk,
+        "tipe": data.tipe,
         "operation_system": data.operation_system,
         "note": data.note,
         "deactive": data.deactive,
@@ -79,4 +80,17 @@ def delete_computer(computer_id: str, branch: str, time_limit: datetime) -> dict
     }
 
     computer = mongo.db.computer.find_one_and_delete(find)
+    return computer
+
+
+def update_last_status_computer(computer_id: str, branch: str, last_status: str) -> dict:
+    find = {
+        "_id": ObjectId(computer_id),
+        "branch": branch.upper(),
+    }
+    update = {
+        "last_status": last_status,
+    }
+
+    computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
     return computer

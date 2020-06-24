@@ -1,8 +1,11 @@
+from bson import ObjectId
+from datetime import datetime
+
 from databases.db import mongo
 from dto.history_dto import HistoryDto
 
 
-def insert_history(data: HistoryDto):
+def insert_history(data: HistoryDto) -> str:
     data_insert = {
         "parent_id": data.parent_id,
         "parent_name": data.parent_name,
@@ -12,6 +15,18 @@ def insert_history(data: HistoryDto):
         "status": data.status.upper(),
         "note": data.note,
         "date": data.date,
+        "timestamp": datetime.now(),
     }
 
-    mongo.db.histories.insert_one(data_insert)
+    return mongo.db.histories.insert_one(data_insert).inserted_id
+
+
+def delete_history(history_id: str, branch: str, time_limit: datetime) -> dict:
+    find_filter = {
+        "_id": ObjectId(history_id),
+        "branch": branch.upper(),
+        "timestamp": {'$gte': time_limit},
+    }
+
+    return mongo.db.histories.find_one_and_delete(find_filter)
+
