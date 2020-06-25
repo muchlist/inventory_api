@@ -48,7 +48,6 @@ def insert_history(parent_id):
         data["branch"] = claims["branch"]
         data["author"] = claims["name"]
 
-        parent = None
         parent_name = "UNKNOWN"
         if data["category"] == "PC":
             parent = computer_update.update_last_status_computer(parent_id, claims["branch"], data["status"])
