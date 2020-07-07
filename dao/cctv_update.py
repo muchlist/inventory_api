@@ -8,11 +8,11 @@ from dto.cctv_dto import CctvDto, PingState, CctvEditDto
 
 def create_cctv(data: CctvDto) -> dict:
 
-    ping_state = PingState(
-        time_second=0,
-        time_date=datetime.now(),
-        status="DOWN",
-    )
+    ping_state_dict = {
+        "time_second": 0,
+        "time_date": datetime.now(),
+        "status": "DOWN",
+    }
 
     data_insert = {
         "created_at": data.created_at,
@@ -29,7 +29,7 @@ def create_cctv(data: CctvDto) -> dict:
         "last_status": data.last_status,
         "note": data.note,
         "deactive": data.deactive,
-        "ping_state": [ping_state],
+        "ping_state": [ping_state_dict],
         "last_ping": "DOWN",
     }
 

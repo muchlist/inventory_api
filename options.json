@@ -71,5 +71,30 @@
   "cctv_devices_type": [
     "FIXED",
     "PTZ"
+  ],
+  "stock_category": [
+    "KOMPUTER",
+    "PART KOMPUTER",
+    "UPS",
+    "PRINTER",
+    "CCTV",
+    "JARINGAN",
+    "SERVER",
+    "HANDHELD",
+    "DISPLAY",
+    "PRESENSI",
+    "LAINNYA"
+  ],
+  "server_category":[
+    "SERVER",
+    "ROUTER",
+    "MANAGED SWITCH",
+    "SWITCH",
+    "WIRELESS ROUTER",
+    "SMART UPS",
+    "UPS",
+    "PC",
+    "STABILIZER",
+    "LAINNYA"
   ]
 }

@@ -11,15 +11,17 @@ def find_history_for_parent(parent_id: str) -> list:
     return histories
 
 
-def find_histories_by_branch_by_category(branch: str, category: str) -> list:
+def find_histories_by_branch_by_category(branch: str, category: str, limit: int) -> list:
     find_filter = {}
     if branch:
         find_filter["branch"] = branch.upper()
     if category:
         find_filter["category"] = category.upper()
+    if not limit:
+        limit = 100
 
     histories_coll = mongo.db.histories.find(
-        find_filter).sort("date", -1).limit(100)
+        find_filter).sort("date", -1).limit(limit)
     histories = []
     for history in histories_coll:
         histories.append(history)

@@ -105,14 +105,23 @@ def get_history():
     claims = get_jwt_claims()
 
     category = request.args.get("category")
+    limit = request.args.get("limit")
+
+    if limit:
+        try:
+            limit = int(limit)
+        except ValueError:
+            return {"message": "limit harus berupa angka"}, 400
+
     branch = claims["branch"]
     if request.args.get("branch"):
         branch = request.args.get("branch")
 
-    try:
-        histories = history_query.find_histories_by_branch_by_category(branch, category)
-    except:
-        return {"message": "Gagal memanggil data dari database"}, 500
+    histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
+    # try:
+    #     histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
+    # except:
+    #     return {"message": "Gagal memanggil data dari database"}, 500
 
     return {"histories": histories}, 200
 
