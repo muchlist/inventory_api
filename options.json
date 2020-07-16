@@ -96,5 +96,20 @@
     "PC",
     "STABILIZER",
     "LAINNYA"
+  ],
+  "history":[
+    "PENGECEKAN",
+    "DIPERBAIKI",
+    "BERMASALAH",
+    "RUSAK",
+    "PINDAH TEMPAT",
+    "GANTI USER",
+    "UPGRADE",
+    "DOWNGRADE",
+    "DIMAINTENANCE",
+    "DIGUDANGKAN",
+    "DIMUSNAHKAN",
+    "HILANG",
+    "LAINNYA"
   ]
 }

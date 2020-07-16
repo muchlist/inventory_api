@@ -149,6 +149,6 @@ def delete_history(history_id):
     except:
         return {"message": "Gagal memanggil data dari database"}, 500
     if history is None:
-        return {"message": "Gagal menghapus history, history yang lebih dari dua jam tidak dapat di hapus"}, 400
+        return {"message": "Gagal menghapus history, 2 hours after created is reached !"}, 400
 
     return {"message": "history berhasil dihapus"}, 204

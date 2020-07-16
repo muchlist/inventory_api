@@ -199,6 +199,6 @@ def detail_computers(computer_id):
             return {"message": "Gagal mengambil data dari database"}, 500
 
         if computer is None:
-            return {"message": "gagal menghapus komputer, batas waktu hanya dua jam setelah pembuatan"}, 400
+            return {"message": "Gagal menghapus komputer, 2 hours after created is reached !"}, 400
 
         return {"message": "komputer berhasil di hapus"}, 204
