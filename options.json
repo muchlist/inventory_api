@@ -24,7 +24,8 @@
     "DESKTOP",
     "LAPTOP",
     "ALL_IN_ONE",
-    "SERVER"
+    "SERVER",
+    "LAINNYA"
   ],
   "operation_system": [
     "Windows 10 64",
@@ -33,10 +34,11 @@
     "Windows 8 32",
     "Windows 7 64",
     "Windows 7 32",
-    "Windows XP",
+    "Windows XP 32",
     "Windows Server",
     "Linux",
-    "Mac Os"
+    "Mac Os",
+    "Lainnya"
   ],
   "processors": [
     "Core 2 Duo",
@@ -98,15 +100,16 @@
     "LAINNYA"
   ],
   "history":[
-    "PENGECEKAN",
-    "DIPERBAIKI",
+    "BAIK",
+    "SEDANG DIPERBAIKI",
     "BERMASALAH",
     "RUSAK",
+    "PENGECEKAN",
+    "MAINTENANCE",
     "PINDAH TEMPAT",
     "GANTI USER",
     "UPGRADE",
     "DOWNGRADE",
-    "DIMAINTENANCE",
     "DIGUDANGKAN",
     "DIMUSNAHKAN",
     "HILANG",

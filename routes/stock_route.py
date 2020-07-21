@@ -36,10 +36,11 @@ def find_stock():
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
+            return {"msg": "Input tidak valid"}, 400
+            # return err.messages, 400
 
         if not isEndUser(claims):
-            return {"message": "User tidak memiliki hak akses"}, 401
+            return {"msg": "User tidak memiliki hak akses"}, 400
 
         stock_dto = StockDto(
             created_at=datetime.now(),
@@ -61,7 +62,7 @@ def find_stock():
         try:
             result = stock_update.create_stock(stock_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
         return jsonify(result), 201
 
@@ -90,7 +91,7 @@ Detail stock localhost:5001/stocks/objectID
 @jwt_required
 def detail_stock(stock_id):
     if not ObjectId.is_valid(stock_id):
-        return {"message": "Object ID tidak valid"}, 400
+        return {"msg": "Object ID tidak valid"}, 400
 
     claims = get_jwt_claims()
 
@@ -99,10 +100,10 @@ def detail_stock(stock_id):
         try:
             stock = stock_query.get_stock(stock_id)
         except:
-            return {"message": "Gagal mengambil data dari database"}, 500
+            return {"msg": "Gagal mengambil data dari database"}, 500
 
         if stock is None:
-            return {"message": "Stock dengan ID tersebut tidak ditemukan"}, 404
+            return {"msg": "Stock dengan ID tersebut tidak ditemukan"}, 400
 
         return jsonify(stock), 200
 
@@ -111,10 +112,11 @@ def detail_stock(stock_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
+            # return err.messages, 400
+            return {"msg": "Input tidak valid"}, 400
 
         if not isEndUser(claims):
-            return {"message": "User tidak memiliki hak akses"}, 401
+            return {"msg": "User tidak memiliki hak akses"}, 401
 
         stock_edit_dto = StockEditDto(
             filter_id=stock_id,
@@ -135,10 +137,10 @@ def detail_stock(stock_id):
         try:
             result = stock_update.update_stock(stock_edit_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
         if result is None:
-            return {"message": "gagal update stock, data telah diubah oleh orang lain sebelumnya"}, 400
+            return {"msg": "gagal update stock, data telah diubah oleh orang lain sebelumnya"}, 400
 
         return jsonify(result), 200
 
@@ -151,12 +153,12 @@ def detail_stock(stock_id):
             stock = stock_update.delete_stock(
                 stock_id, claims["branch"], time_limit)
         except:
-            return {"message": "Gagal mengambil data dari database"}, 500
+            return {"msg": "Gagal mengambil data dari database"}, 500
 
         if stock is None:
-            return {"message": "gagal menghapus stock, batas waktu hanya dua jam setelah pembuatan"}, 400
+            return {"msg": "gagal menghapus stock, batas waktu hanya dua jam setelah pembuatan"}, 400
 
-        return {"message": "stock berhasil di hapus"}, 204
+        return {"msg": "stock berhasil di hapus"}, 204
 
 
 """
@@ -170,21 +172,22 @@ Detail stock localhost:5001/use-stock/objectID
 @jwt_required
 def use_stock(stock_id):
     if not ObjectId.is_valid(stock_id):
-        return {"message": "Object ID tidak valid"}, 400
+        return {"msg": "Object ID tidak valid"}, 400
 
     claims = get_jwt_claims()
     schema = StockUseSchema()
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        return err.messages, 400
+        # return err.messages, 400
+        return {"msg": "Input tidak valid"}, 400
 
     if not isEndUser(claims):
-        return {"message": "User tidak memiliki hak akses"}, 401
+        return {"msg": "User tidak memiliki hak akses"}, 400
 
     mode_available = ["INCREMENT", "DECREMENT"]
     if data["mode"].upper() not in mode_available:
-        return {"message": "Pilihan input pada mode harus INCREMENT atau DECREMENT"}, 400
+        return {"msg": "Pilihan input pada mode harus INCREMENT atau DECREMENT"}, 400
 
     use_stock_dto = UseStockDto(
         parent_id=stock_id,
@@ -200,15 +203,15 @@ def use_stock(stock_id):
         try:
             result = stock_update.increment(use_stock_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
     else:  # DECREMENT
         try:
             result = stock_update.decrement(use_stock_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
     if result is None:
-        return {"message": "gagal update stock, jumlah stock tidak mencukupi"}, 400
+        return {"msg": "gagal update stock, jumlah stock tidak mencukupi"}, 400
 
     return jsonify(result), 200

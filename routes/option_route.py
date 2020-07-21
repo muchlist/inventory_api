@@ -15,12 +15,12 @@ options
 
 @bp.route('/ping', methods=['GET'])
 def ping():
-    return {"message": "pong"}, 200
+    return {"msg": "pong"}, 200
 
 
 @bp.route('/options_version', methods=['GET'])
 def option_version():
-    return {"message": options_json_object["version"]}, 200
+    return {"msg": options_json_object["version"]}, 200
 
 
 @bp.route('/options', methods=['GET'])

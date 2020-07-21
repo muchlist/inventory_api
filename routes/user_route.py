@@ -31,14 +31,15 @@ def login_user():
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        return err.messages, 400
+        # return err.messages, 400
+        return {"msg": "Input tidak valid"}, 400
 
     # mendapatkan data user termasuk password
     user = user_query.get_one(data["username"])
 
     # Cek apakah hash password sama
     if not (user and bcrypt.check_password_hash(user["password"], data["password"])):
-        return {"message": "user atau password salah"}, 400
+        return {"msg": "user atau password salah"}, 400
 
     # Membuat akses token menggunakan username di database
     access_token = create_access_token(
@@ -128,7 +129,8 @@ def change_password():
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        return err.messages, 400
+        # return err.messages, 400
+        return {"msg": "Input tidak valid"}, 400
 
     user_username = get_jwt_identity()
 
@@ -136,14 +138,14 @@ def change_password():
 
     # Cek apakah hash password inputan sama
     if not bcrypt.check_password_hash(user["password"], data["password"]):
-        return {'message': "password salah"}, 400
+        return {'msg': "password salah"}, 400
 
     # menghash password baru
     new_password_hash = bcrypt.generate_password_hash(
         data["new_password"]).decode("utf-8")
 
     user_update.put_password(user_username, new_password_hash)
-    return {'message': "password berhasil di ubah"}, 200
+    return {'msg': "password berhasil di ubah"}, 200
 
 
 """

@@ -41,9 +41,9 @@ def find_computers():
             return err.messages, 400
 
         if not isEndUser(claims):
-            return {"message": "User tidak memiliki hak akses"}, 401
+            return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
-            return {"message": "IP Address salah"}, 400
+            return {"msg": "IP Address salah"}, 400
 
         spec_dto = SpecDto(
             processor=data["processor"],
@@ -77,7 +77,7 @@ def find_computers():
         try:
             result = computer_update.create_computer(computer_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
         return jsonify(result), 201
 
@@ -107,7 +107,7 @@ Detail komputer localhost:5001/computers/objectID
 @jwt_required
 def detail_computers(computer_id):
     if not ObjectId.is_valid(computer_id):
-        return {"message": "Object ID tidak valid"}, 400
+        return {"msg": "Object ID tidak valid"}, 400
 
     claims = get_jwt_claims()
 
@@ -116,10 +116,10 @@ def detail_computers(computer_id):
         try:
             computer = computer_query.get_computer(computer_id)
         except:
-            return {"message": "Gagal mengambil data dari database"}, 500
+            return {"msg": "Gagal mengambil data dari database"}, 500
 
         if computer is None:
-            return {"message": "Komputer dengan ID tersebut tidak ditemukan"}, 404
+            return {"msg": "Komputer dengan ID tersebut tidak ditemukan"}, 400
 
         return jsonify(computer), 200
 
@@ -128,12 +128,13 @@ def detail_computers(computer_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
+            # return err.messages, 400
+            return {"msg": "Input tidak valid"}, 400
 
         if not isEndUser(claims):
-            return {"message": "User tidak memiliki hak akses"}, 401
+            return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
-            return {"message": "IP Address salah"}, 400
+            return {"msg": "IP Address salah"}, 400
 
         data["score"] = 0
 
@@ -170,10 +171,10 @@ def detail_computers(computer_id):
         try:
             result = computer_update.update_computer(computer_edit_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
         if result is None:
-            return {"message": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
+            return {"msg": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
 
         history_dto = HistoryDto(result["_id"],
                                  result["client_name"],
@@ -196,9 +197,9 @@ def detail_computers(computer_id):
             computer = computer_update.delete_computer(
                 computer_id, claims["branch"], time_limit)
         except:
-            return {"message": "Gagal mengambil data dari database"}, 500
+            return {"msg": "Gagal mengambil data dari database"}, 500
 
         if computer is None:
-            return {"message": "Gagal menghapus komputer, 2 hours after created is reached !"}, 400
+            return {"msg": "Gagal menghapus komputer, 2 hours after created is reached !"}, 400
 
-        return {"message": "komputer berhasil di hapus"}, 204
+        return {"msg": "komputer berhasil di hapus"}, 204

@@ -30,18 +30,19 @@ def insert_history(parent_id):
     claims = get_jwt_claims()
 
     if not ObjectId.is_valid(parent_id):
-        return {"message": "Object ID tidak valid"}, 400
+        return {"msg": "Object ID tidak valid"}, 400
 
     if request.method == 'POST':
         schema = HistoryInsertSchema()
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
+            # return err.messages, 400
+            return {"msg": "Input tidak valid"}, 400
 
         category_available = ["PC", "CCTV"]
         if data["category"].upper() not in category_available:
-            return {"message": "Field category salah!"}, 400
+            return {"msg": "Field category salah!"}, 400
 
         if data["date"] is None:
             data["date"] = datetime.now()
@@ -52,13 +53,13 @@ def insert_history(parent_id):
         if data["category"] == "PC":
             parent = computer_update.update_last_status_computer(parent_id, claims["branch"], data["status"])
             if parent is None:
-                return {"message": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
             parent_name = parent["client_name"]
 
         if data["category"] == "CCTV":
             parent = cctv_update.update_last_status_cctv(parent_id, claims["branch"], data["status"])
             if parent is None:
-                return {"message": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
             parent_name = parent["cctv_name"]
 
         history_dto = HistoryDto(parent_id,
@@ -73,7 +74,7 @@ def insert_history(parent_id):
         try:
             history_id = history_update.insert_history(history_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
         data["_id"] = history_id
         data["parent_id"] = parent_id
@@ -86,7 +87,7 @@ def insert_history(parent_id):
         try:
             histories = history_query.find_history_for_parent(parent_id)
         except:
-            return {"message": "Gagal memanggil data dari database"}, 500
+            return {"msg": "Gagal memanggil data dari database"}, 500
 
         return {"histories": histories}, 200
 
@@ -111,7 +112,7 @@ def get_history():
         try:
             limit = int(limit)
         except ValueError:
-            return {"message": "limit harus berupa angka"}, 400
+            return {"msg": "limit harus berupa angka"}, 400
 
     branch = claims["branch"]
     if request.args.get("branch"):
@@ -139,7 +140,7 @@ api.com/histories?category=PC&branch=BAGENDANG
 def delete_history(history_id):
     claims = get_jwt_claims()
     if not ObjectId.is_valid(history_id):
-        return {"message": "Object ID tidak valid"}, 400
+        return {"msg": "Object ID tidak valid"}, 400
 
     # dua jam kurang dari sekarang
     time_limit = datetime.now() - timedelta(hours=2)
@@ -147,8 +148,8 @@ def delete_history(history_id):
     try:
         history = history_update.delete_history(history_id, claims["branch"], time_limit)
     except:
-        return {"message": "Gagal memanggil data dari database"}, 500
+        return {"msg": "Gagal memanggil data dari database"}, 500
     if history is None:
-        return {"message": "Gagal menghapus history, 2 hours after created is reached !"}, 400
+        return {"msg": "Gagal menghapus history, 2 hours after created is reached !"}, 400
 
-    return {"message": "history berhasil dihapus"}, 204
+    return {"msg": "history berhasil dihapus"}, 204

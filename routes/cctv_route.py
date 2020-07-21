@@ -38,12 +38,13 @@ def find_cctv():
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
+            # return err.messages, 400
+            return {"msg": "Input tidak valid"}, 400
 
         if not isEndUser(claims):
-            return {"message": "User tidak memiliki hak akses"}, 401
+            return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
-            return {"message": "IP Address salah"}, 400
+            return {"msg": "IP Address salah"}, 400
 
         cctv_dto = CctvDto(
             created_at=datetime.now(),
@@ -66,7 +67,7 @@ def find_cctv():
         try:
             result = cctv_update.create_cctv(cctv_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
         return jsonify(result), 201
 
@@ -96,7 +97,7 @@ Detail komputer localhost:5001/computers/objectID
 @jwt_required
 def detail_cctvs(cctv_id):
     if not ObjectId.is_valid(cctv_id):
-        return {"message": "Object ID tidak valid"}, 400
+        return {"msg": "Object ID tidak valid"}, 400
 
     claims = get_jwt_claims()
 
@@ -105,10 +106,10 @@ def detail_cctvs(cctv_id):
         try:
             cctv = cctv_query.get_cctv(cctv_id)
         except:
-            return {"message": "Gagal mengambil data dari database"}, 500
+            return {"msg": "Gagal mengambil data dari database"}, 500
 
         if cctv is None:
-            return {"message": "Cctv dengan ID tersebut tidak ditemukan"}, 404
+            return {"msg": "Cctv dengan ID tersebut tidak ditemukan"}, 404
 
         return jsonify(cctv), 200
 
@@ -117,12 +118,13 @@ def detail_cctvs(cctv_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
+            # return err.messages, 400
+            return {"msg": "Input tidak valid"}, 400
 
         if not isEndUser(claims):
-            return {"message": "User tidak memiliki hak akses"}, 401
+            return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
-            return {"message": "IP Address salah"}, 400
+            return {"msg": "IP Address salah"}, 400
 
         data["score"] = 0
 
@@ -147,10 +149,10 @@ def detail_cctvs(cctv_id):
         try:
             result = cctv_update.update_cctv(cctv_edit_dto)
         except:
-            return {"message": "Gagal menyimpan data ke database"}, 500
+            return {"msg": "Gagal menyimpan data ke database"}, 500
 
         if result is None:
-            return {"message": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
+            return {"msg": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
 
         history_dto = HistoryDto(result["_id"],
                                  result["cctv_name"],
@@ -173,9 +175,9 @@ def detail_cctvs(cctv_id):
             cctv = cctv_update.delete_cctv(
                 cctv_id, claims["branch"], time_limit)
         except:
-            return {"message": "Gagal mengambil data dari database"}, 500
+            return {"msg": "Gagal mengambil data dari database"}, 500
 
         if cctv is None:
-            return {"message": "gagal menghapus cctv, hanya dapat dihapus dua jam setelah pembuatan"}, 400
+            return {"msg": "gagal menghapus cctv, hanya dapat dihapus dua jam setelah pembuatan"}, 400
 
-        return {"message": "cctv berhasil di hapus"}, 204
+        return {"msg": "cctv berhasil di hapus"}, 204

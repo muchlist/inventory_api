@@ -41,7 +41,8 @@ def register_user():
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        return err.messages, 400
+        # return err.messages, 400
+        return {"msg": "Input tidak valid"}, 400
 
     # hash password
     pw_hash = bcrypt.generate_password_hash(
@@ -50,7 +51,7 @@ def register_user():
 
     # mengecek apakah user exist
     if user_eksis(data["username"]):
-        return {"message": "user tidak tersedia"}, 400
+        return {"msg": "user tidak tersedia"}, 400
 
     # mendaftarkan ke mongodb
     user_dto = UserDto(data["username"],
@@ -65,7 +66,7 @@ def register_user():
     # except:
     #     return {"message": "gagal menyimpan ke database"}, 500
     user_update.insert_user(user_dto)
-    return {"message": "data berhasil disimpan"}, 201
+    return {"msg": "data berhasil disimpan"}, 201
 
 
 """
@@ -79,33 +80,34 @@ Merubah dan mendelete user
 @jwt_required
 def put_delete_user(username):
     if not valid.isAdmin(get_jwt_claims()):
-        return {"message": "user tidak memiliki authorisasi"}, 403
+        return {"msg": "user tidak memiliki authorisasi"}, 400
 
     if request.method == 'PUT':
         schema = UserEditSchema()
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
+            # return err.messages, 400
+            return {"msg": "Input tidak valid"}, 400
 
         if not user_eksis(username):
-            return {"message": f"user {username} tidak ditemukan"}, 404
+            return {"msg": f"user {username} tidak ditemukan"}, 400
 
         user_dto = UserDto(username, "", data["email"], data["isAdmin"], data["isEndUser"], data["branch"])
 
         try:
             user_update.update_user(user_dto)
         except:
-            return {"message": "gagal menyimpan ke database"}, 500
+            return {"msg": "gagal menyimpan ke database"}, 500
 
-        return {"message": f"user {username} berhasil diubah"}, 201
+        return {"msg": f"user {username} berhasil diubah"}, 201
 
     if request.method == 'DELETE':
         if not user_eksis(username):
-            return {"message": f"user {username} tidak ditemukan"}
+            return {"msg": f"user {username} tidak ditemukan"}
 
         user_update.delete_user(username)
-        return {"message": f"user {username} berhasil dihapus"}, 201
+        return {"msg": f"user {username} berhasil dihapus"}, 201
 
 
 """
@@ -119,15 +121,15 @@ Reset Password
 @jwt_required
 def reset_password_by_admin(username):
     if not valid.isAdmin(get_jwt_claims()):
-        return {"message": "user tidak memiliki authorisasi"}, 403
+        return {"msg": "user tidak memiliki authorisasi"}, 403
 
     if request.method == 'GET':
         if not user_eksis(username):
-            return {"message": f"user {username} tidak ditemukan"}, 404
+            return {"msg": f"user {username} tidak ditemukan"}, 404
 
         # hash password
         pw_hash = bcrypt.generate_password_hash("Pelindo3").decode("utf-8")
 
         user_update.put_password(username, pw_hash)
 
-        return {"message": f"Password user {username} berhasil direset"}, 201
+        return {"msg": f"Password user {username} berhasil direset"}, 201
