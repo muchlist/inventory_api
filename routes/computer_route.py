@@ -37,8 +37,8 @@ def find_computers():
         schema = ComputerInsertSchema()
         try:
             data = schema.load(request.get_json())
-        except ValidationError as err:
-            return err.messages, 400
+        except ValidationError:
+            return {"msg": "Input tidak valid"}, 400
 
         if not isEndUser(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
