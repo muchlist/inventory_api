@@ -7,13 +7,14 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 from marshmallow import ValidationError
+from config import config as cf
 
 from dao import (cctv_query,
                  cctv_update,
                  history_update)
 from dto.cctv_dto import CctvDto, CctvEditDto
 from dto.history_dto import HistoryDto
-from input_schemas.cctv import (CctvInsertSchema, CctvEditSchema)
+from input_schemas.cctv import (CctvInsertSchema, CctvEditSchema, CctvAppendStatusSchema)
 from validations.input_validation import is_ip_address_valid
 from validations.role_validation import isEndUser
 
@@ -88,7 +89,7 @@ def find_cctv():
 
 """
 ------------------------------------------------------------------------------
-Detail komputer localhost:5001/computers/objectID
+Detail Cctv localhost:5001/cctvs/objectID
 ------------------------------------------------------------------------------
 """
 
@@ -181,3 +182,50 @@ def detail_cctvs(cctv_id):
             return {"msg": "gagal menghapus cctv, hanya dapat dihapus dua jam setelah pembuatan"}, 400
 
         return {"msg": "cctv berhasil di hapus"}, 204
+
+
+"""
+------------------------------------------------------------------------------
+Append Status CCTV localhost:5001/cctvs/append
+------------------------------------------------------------------------------
+"""
+
+
+@bp.route("/cctv-states-update", methods=['POST'])
+def append_cctv_ping_state():
+
+    if request.method == 'POST':
+
+        key = request.args.get("key")
+        if key != cf.get('cctv_secret_key'):
+            return {"msg": "Key tidak valid"}, 400
+
+        schema = CctvAppendStatusSchema()
+        try:
+            data = schema.load(request.get_json())
+        except ValidationError:
+            return {"msg": "Input tidak valid"}, 400
+
+        response_code = cctv_update.append_status_ping_cctv(data["ip_addresses"], data["ping_code"])
+        if response_code == 400:
+            return {"msg": "Update gagal"}, 400
+        return {"msg": "Success"}, 200
+
+
+@bp.route("/cctv-ip", methods=['GET'])
+def cctv_ip_list():
+
+    if request.method == 'GET':
+
+        key = request.args.get("key")
+        branch = request.args.get("branch")
+        location = request.args.get("location")
+
+        if key != cf.get('cctv_secret_key'):
+            return {"msg": "Key tidak valid"}, 400
+
+        if branch is None:
+            return {"msg": "Argumen cabang tidak valid"}, 400
+
+        cctv_ip_address = cctv_query.find_cctv_ip_list(branch, location)
+        return {"cctv_ip": cctv_ip_address}, 200

@@ -3,7 +3,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 
 from databases.db import mongo
-from dto.computer_dto import ComputerDto, ComputerEditDto
+from dto.computer_dto import ComputerDto, ComputerEditDto, ComputerChangeActiveDto
 
 
 def create_computer(data: ComputerDto) -> dict:
@@ -90,6 +90,21 @@ def update_last_status_computer(computer_id: str, branch: str, last_status: str)
     }
     update = {
         "last_status": last_status,
+    }
+
+    computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
+    return computer
+
+
+def change_activate_computer(data: ComputerChangeActiveDto) -> dict:
+    find = {
+        "_id": ObjectId(data.filter_id),
+        "branch": data.filter_branch,
+        "updated_at": data.filter_timestamp,
+    }
+    update = {
+        "updated_at": data.updated_at,
+        "deactive": data.deactive,
     }
 
     computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)

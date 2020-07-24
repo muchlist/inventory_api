@@ -25,3 +25,8 @@ class CctvEditSchema(Schema):
     tipe = fields.Str(required=True)
 
     timestamp = fields.DateTime(required=True)
+
+
+class CctvAppendStatusSchema(Schema):
+    ip_addresses = fields.List(fields.String(), required=True)
+    ping_code = fields.Int(required=True)

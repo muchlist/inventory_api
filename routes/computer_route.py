@@ -11,9 +11,11 @@ from marshmallow import ValidationError
 from dao import (computer_query,
                  computer_update,
                  history_update)
-from dto.computer_dto import ComputerDto, SpecDto, ComputerEditDto
+from dto.computer_dto import ComputerDto, SpecDto, ComputerEditDto, ComputerChangeActiveDto
 from dto.history_dto import HistoryDto
-from input_schemas.computer import (ComputerInsertSchema, ComputerEditSchema)
+from input_schemas.computer import (ComputerInsertSchema,
+                                    ComputerEditSchema,
+                                    ComputerChangeActiveSchema)
 from validations.input_validation import is_ip_address_valid
 from validations.role_validation import isEndUser
 
@@ -203,3 +205,51 @@ def detail_computers(computer_id):
             return {"msg": "Gagal menghapus komputer, 2 hours after created is reached !"}, 400
 
         return {"msg": "komputer berhasil di hapus"}, 204
+
+
+"""
+------------------------------------------------------------------------------
+Change Status active komputer localhost:5001/computers/objectID/active
+------------------------------------------------------------------------------
+"""
+
+
+@bp.route("/computers/<computer_id>/<active_status>", methods=['POST'])
+@jwt_required
+def change_activate_computers(computer_id, active_status):
+    if not ObjectId.is_valid(computer_id):
+        return {"msg": "Object ID tidak valid"}, 400
+
+    claims = get_jwt_claims()
+
+    if request.method == 'POST':
+
+        schema = ComputerChangeActiveSchema()
+        try:
+            data = schema.load(request.get_json())
+        except ValidationError:
+            return {"msg": "Input tidak valid"}, 400
+
+        if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
+            return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400
+
+        if not isEndUser(claims):
+            return {"msg": "User tidak memiliki hak akses"}, 400
+
+        change_active_dto = ComputerChangeActiveDto(
+            filter_id=computer_id,
+            filter_timestamp=data["timestamp"],
+            filter_branch=claims["branch"],
+            updated_at=datetime.now(),
+            deactive=active_status.upper() == "DEACTIVE"
+        )
+
+        try:
+            computer = computer_update.change_activate_computer(change_active_dto)
+        except:
+            return {"msg": "Gagal mengambil data dari database"}, 500
+
+        if computer is None:
+            return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
+
+        return jsonify(computer), 200

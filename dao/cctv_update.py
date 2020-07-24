@@ -3,13 +3,13 @@ from datetime import datetime
 from bson.objectid import ObjectId
 
 from databases.db import mongo
-from dto.cctv_dto import CctvDto, PingState, CctvEditDto
+from dto.cctv_dto import CctvDto, CctvEditDto
 
 
 def create_cctv(data: CctvDto) -> dict:
 
     ping_state_dict = {
-        "time_second": 0,
+        "code": 0,
         "time_date": datetime.now(),
         "status": "DOWN",
     }
@@ -83,3 +83,34 @@ def update_last_status_cctv(cctv_id: str, branch: str, last_status: str) -> dict
 
     cctv = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
     return cctv
+
+
+def append_status_ping_cctv(ip_address_list: list, ping_code: int) -> int:
+    # 2 up , 1 half, 0 down
+    ping_code_dict = {
+        0: "DOWN",
+        1: "HALF",
+        2: "UP"
+    }
+
+    ping_state_dict = {
+        "code": ping_code,
+        "time_date": datetime.now(),
+        "status": ping_code_dict.get(ping_code),
+    }
+
+    filter_cctv = {
+        "ip_address": {'$in': ip_address_list}
+    }
+
+    update = {
+        '$push': {"ping_state": {'$each': [ping_state_dict, ], '$position': 0, '$slice': 12}},
+        '$set': {"last_ping": ping_state_dict.get("status")}
+    }
+
+    try:
+        mongo.db.cctv.update(filter_cctv, update, multi=True)
+    except:
+        return 400
+
+    return 200

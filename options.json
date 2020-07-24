@@ -14,10 +14,16 @@
     "LAINNYA"
   ],
   "locations": [
-    "BJM_REG",
-    "BJM_TRISAKTI",
-    "BJM_TPKB",
-    "BJM_PULPIS",
+    "REG_BANJARMASIN",
+    "TRISAKTI_BANJARMASIN",
+    "TPKB_BANJARMASIN",
+    "PULPIS_BANJARMASIN",
+    "SAMPIT_SAMPIT",
+    "BAGENDANG_SAMPIT",
+    "KOTABARU_KOTABARU",
+    "BATULICIN_BATULICIN",
+    "KUMAI_KUMAI",
+    "BUMIHARJO_KUMAI",
     "LAINNYA"
   ],
   "pc_devices_type": [

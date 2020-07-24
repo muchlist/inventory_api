@@ -39,3 +39,7 @@ class ComputerEditSchema(Schema):
     deactive = fields.Bool(required=True)
 
     timestamp = fields.DateTime(required=True)
+
+
+class ComputerChangeActiveSchema(Schema):
+    timestamp = fields.DateTime(required=True)

@@ -52,3 +52,12 @@ class ComputerEditDto(NamedTuple):
     note: str
     deactive: bool
     spec: SpecDto
+
+
+class ComputerChangeActiveDto(NamedTuple):
+    filter_id: str
+    filter_timestamp: datetime
+    filter_branch: str
+
+    updated_at: datetime
+    deactive: bool

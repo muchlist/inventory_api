@@ -31,3 +31,20 @@ def find_cctv_by_branch_ip_cctv_name(branch: str, ip_address: str, cctv_name: st
         cctvs.append(cctv)
 
     return cctvs
+
+
+def find_cctv_ip_list(branch: str, location: str) -> list:
+    find_filter = {}
+    if branch:
+        find_filter["branch"] = branch.upper()
+    if location:
+        find_filter["location"] = location.upper()
+
+    projection = {"ip_address": 1}
+
+    cctv_coll = mongo.db.cctv.find(find_filter, projection)
+    cctv_ip_address_list = []
+    for cctv in cctv_coll:
+        cctv_ip_address_list.append(cctv["ip_address"])
+
+    return cctv_ip_address_list
