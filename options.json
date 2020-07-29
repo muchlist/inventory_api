@@ -26,6 +26,17 @@
     "BUMIHARJO_KUMAI",
     "LAINNYA"
   ],
+  "stock_location": [
+    "LEMARI RAK BANJARMASIN",
+    "GUDANG BANJARMASIN",
+    "SERVER BAGENDANG",
+    "GUDANG BAGENDANG",
+    "KOTABARU",
+    "BUMIHARJO",
+    "KUMAI",
+    "BATULICIN",
+    "LAINNYA"
+  ],
   "pc_devices_type": [
     "DESKTOP",
     "LAPTOP",

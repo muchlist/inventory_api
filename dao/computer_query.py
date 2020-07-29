@@ -24,7 +24,7 @@ def find_computer_by_branch_ip_clientname(branch: str, ip_address: str, client_n
     if client_name:
         find_filter["client_name"] = {'$regex': f'.*{client_name.upper()}.*'}
 
-    vision_filter = {
+    visible_filter = {
         "_id": 1,
         "branch": 1,
         "client_name": 1,
@@ -34,7 +34,7 @@ def find_computer_by_branch_ip_clientname(branch: str, ip_address: str, client_n
         "ip_address": 1,
     }
 
-    computer_coll = mongo.db.computer.find(find_filter, vision_filter).sort(
+    computer_coll = mongo.db.computer.find(find_filter, visible_filter).sort(
         [("location", 1), ("division", 1)])
     computers = []
     for computer in computer_coll:

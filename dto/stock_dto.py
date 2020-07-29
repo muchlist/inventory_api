@@ -43,3 +43,12 @@ class UseStockDto(NamedTuple):
     ba_number: str
     note: str
     time: datetime
+
+
+class StockChangeActiveDto(NamedTuple):
+    filter_id: str
+    filter_timestamp: datetime
+    filter_branch: str
+
+    updated_at: datetime
+    deactive: bool

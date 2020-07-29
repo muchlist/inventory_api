@@ -20,9 +20,20 @@ def find_stock_by_branch(branch: str, stock_name: str, deactive: str) -> list:
         elif deactive == "no":
             find_filter["deactive"] = False
     if stock_name:
-        find_filter["cctv_name"] = {'$regex': f'.*{stock_name.upper()}.*'}
+        find_filter["stock_name"] = {'$regex': f'.*{stock_name.upper()}.*'}
 
-    stock_coll = mongo.db.stock.find(find_filter).sort(
+    visible_filter = {
+        "_id": 1,
+        "branch": 1,
+        "stock_name": 1,
+        "category": 1,
+        "unit": 1,
+        "qty": 1,
+        "threshold": 1,
+        "location": 1,
+    }
+
+    stock_coll = mongo.db.stock.find(find_filter, visible_filter).sort(
         [("category", 1), ("stock_name", 1)])
     stocks = []
     for stock in stock_coll:

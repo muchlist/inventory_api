@@ -30,3 +30,8 @@ class StockUseSchema(Schema):
     ba_number = fields.Str(required=True)
     note = fields.Str(required=True)
     time = fields.DateTime(required=True)
+
+
+class StockChangeActiveSchema(Schema):
+    timestamp = fields.DateTime(required=True)
+

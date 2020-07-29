@@ -4,7 +4,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 
 from databases.db import mongo
-from dto.stock_dto import StockDto, StockEditDto, UseStockDto
+from dto.stock_dto import StockDto, StockEditDto, UseStockDto, StockChangeActiveDto
 
 
 def create_stock(data: StockDto) -> dict:
@@ -122,4 +122,19 @@ def delete_stock(stock_id: str, branch: str, time_limit: datetime) -> dict:
     }
 
     stock = mongo.db.stock.find_one_and_delete(find)
+    return stock
+
+
+def change_activate_stock(data: StockChangeActiveDto) -> dict:
+    find = {
+        "_id": ObjectId(data.filter_id),
+        "branch": data.filter_branch,
+        "updated_at": data.filter_timestamp,
+    }
+    update = {
+        "updated_at": data.updated_at,
+        "deactive": data.deactive,
+    }
+
+    stock = mongo.db.stock.find_one_and_update(find, {'$set': update}, return_document=True)
     return stock

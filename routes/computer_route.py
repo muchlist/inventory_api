@@ -130,8 +130,8 @@ def detail_computers(computer_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            # return err.messages, 400
-            return {"msg": "Input tidak valid"}, 400
+            return err.messages, 400
+            #return {"msg": "Input tidak valid"}, 400
 
         if not isEndUser(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
@@ -176,7 +176,7 @@ def detail_computers(computer_id):
             return {"msg": "Gagal menyimpan data ke database"}, 500
 
         if result is None:
-            return {"msg": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
+            return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
 
         history_dto = HistoryDto(result["_id"],
                                  result["client_name"],
@@ -202,7 +202,7 @@ def detail_computers(computer_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if computer is None:
-            return {"msg": "Gagal menghapus komputer, 2 hours after created is reached !"}, 400
+            return {"msg": "Gagal menghapus komputer, batas waktu dua jam telah tercapai !"}, 400
 
         return {"msg": "komputer berhasil di hapus"}, 204
 

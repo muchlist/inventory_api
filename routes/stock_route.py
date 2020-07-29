@@ -11,8 +11,14 @@ from marshmallow import ValidationError
 from dao import (stock_update,
                  stock_query,
                  )
-from dto.stock_dto import StockDto, StockEditDto, UseStockDto
-from input_schemas.stock import (StockInsertSchema, StockEditSchema, StockUseSchema)
+from dto.stock_dto import (StockDto,
+                           StockEditDto,
+                           UseStockDto,
+                           StockChangeActiveDto)
+from input_schemas.stock import (StockInsertSchema,
+                                 StockEditSchema,
+                                 StockUseSchema,
+                                 StockChangeActiveSchema)
 from validations.role_validation import isEndUser
 
 bp = Blueprint('stock_bp', __name__, url_prefix='/api')
@@ -140,7 +146,7 @@ def detail_stock(stock_id):
             return {"msg": "Gagal menyimpan data ke database"}, 500
 
         if result is None:
-            return {"msg": "gagal update stock, data telah diubah oleh orang lain sebelumnya"}, 400
+            return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
 
         return jsonify(result), 200
 
@@ -156,7 +162,7 @@ def detail_stock(stock_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if stock is None:
-            return {"msg": "gagal menghapus stock, batas waktu hanya dua jam setelah pembuatan"}, 400
+            return {"msg": "Gagal menghapus stock, batas waktu dua jam telah tercapai !"}, 400
 
         return {"msg": "stock berhasil di hapus"}, 204
 
@@ -212,6 +218,48 @@ def use_stock(stock_id):
             return {"msg": "Gagal menyimpan data ke database"}, 500
 
     if result is None:
-        return {"msg": "gagal update stock, jumlah stock tidak mencukupi"}, 400
+        return {"msg": "Gagal update stock, jumlah stock tidak mencukupi"}, 400
 
     return jsonify(result), 200
+
+
+@bp.route("/stocks/<stock_id>/<active_status>", methods=['POST'])
+@jwt_required
+def change_activate_stock(stock_id, active_status):
+    if not ObjectId.is_valid(stock_id):
+        return {"msg": "Object ID tidak valid"}, 400
+
+    claims = get_jwt_claims()
+
+    if request.method == 'POST':
+
+        schema = StockChangeActiveSchema()
+        try:
+            data = schema.load(request.get_json())
+        except ValidationError:
+            return {"msg": "Input tidak valid"}, 400
+
+        if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
+            return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400
+
+        if not isEndUser(claims):
+            return {"msg": "User tidak memiliki hak akses"}, 400
+
+        change_active_dto = StockChangeActiveDto(
+            filter_id=stock_id,
+            filter_timestamp=data["timestamp"],
+            filter_branch=claims["branch"],
+            updated_at=datetime.now(),
+            deactive=active_status.upper() == "DEACTIVE"
+        )
+
+        try:
+            stock = stock_update.change_activate_stock(change_active_dto)
+        except:
+            return {"msg": "Gagal mengambil data dari database"}, 500
+
+        if stock is None:
+            return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
+
+        return jsonify(stock), 200
+

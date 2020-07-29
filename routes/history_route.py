@@ -150,6 +150,6 @@ def delete_history(history_id):
     except:
         return {"msg": "Gagal memanggil data dari database"}, 500
     if history is None:
-        return {"msg": "Gagal menghapus history, 2 hours after created is reached !"}, 400
+        return {"msg": "Gagal menghapus riwayat, batas waktu dua jam telah tercapai !"}, 400
 
     return {"msg": "history berhasil dihapus"}, 204
