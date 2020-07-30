@@ -10,11 +10,12 @@ from marshmallow import ValidationError
 
 from dao import (stock_update,
                  stock_query,
-                 )
+                 history_update)
 from dto.stock_dto import (StockDto,
                            StockEditDto,
                            UseStockDto,
                            StockChangeActiveDto)
+from dto.history_dto import HistoryDto
 from input_schemas.stock import (StockInsertSchema,
                                  StockEditSchema,
                                  StockUseSchema,
@@ -205,13 +206,16 @@ def use_stock(stock_id):
         qty=data["qty"]
     )
 
+    mode = ""
     if data["mode"] == "INCREMENT":
+        mode = "ditambahkan"
         try:
             result = stock_update.increment(use_stock_dto)
         except:
             return {"msg": "Gagal menyimpan data ke database"}, 500
 
     else:  # DECREMENT
+        mode = "dikurangi"
         try:
             result = stock_update.decrement(use_stock_dto)
         except:
@@ -219,6 +223,17 @@ def use_stock(stock_id):
 
     if result is None:
         return {"msg": "Gagal update stock, jumlah stock tidak mencukupi"}, 400
+
+    # HISTORY
+    history_dto = HistoryDto(result["_id"],
+                             result["stock_name"],
+                             "STOCK",
+                             claims["name"],
+                             result["branch"],
+                             "CHANGE",
+                             f'Jumlah stok {mode} {data["qty"]}',
+                             datetime.now())
+    history_update.insert_history(history_dto)
 
     return jsonify(result), 200
 

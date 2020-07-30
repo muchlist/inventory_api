@@ -99,7 +99,7 @@ def decrement(data: UseStockDto) -> dict:
     find = {
         "_id": ObjectId(data.parent_id),
         "branch": data.branch,
-        "qty": {'$gt': data.qty},
+        "qty": {'$gte': data.qty},
     }
 
     minus_data_qty = -data.qty
