@@ -87,13 +87,16 @@ def find_computers():
         ip_address = request.args.get("ip_address")
         client_name = request.args.get("client_name")
         deactive = request.args.get("deactive")
+        seat = request.args.get("seat")
         branch = claims["branch"]
+        location = request.args.get("location")
+        division = request.args.get("division")
 
         if request.args.get("branch"):
             branch = request.args.get("branch")
 
         computers = computer_query.find_computer_by_branch_ip_clientname(
-            branch, ip_address, client_name, deactive)
+            branch, ip_address, client_name, location, division, seat, deactive)
 
         return {"computers": computers}, 200
 
@@ -131,7 +134,7 @@ def detail_computers(computer_id):
             data = schema.load(request.get_json())
         except ValidationError as err:
             return err.messages, 400
-            #return {"msg": "Input tidak valid"}, 400
+            # return {"msg": "Input tidak valid"}, 400
 
         if not isEndUser(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
