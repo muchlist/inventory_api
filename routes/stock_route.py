@@ -11,11 +11,11 @@ from marshmallow import ValidationError
 from dao import (stock_update,
                  stock_query,
                  history_update)
+from dto.history_dto import HistoryDto
 from dto.stock_dto import (StockDto,
                            StockEditDto,
                            UseStockDto,
                            StockChangeActiveDto)
-from dto.history_dto import HistoryDto
 from input_schemas.stock import (StockInsertSchema,
                                  StockEditSchema,
                                  StockUseSchema,
@@ -75,6 +75,8 @@ def find_stock():
 
     if request.method == 'GET':
         stock_name = request.args.get("stock_name")
+        category = request.args.get("category")
+        location = request.args.get("location")
         deactive = request.args.get("deactive")
         branch = claims["branch"]
 
@@ -82,7 +84,11 @@ def find_stock():
             branch = request.args.get("branch")
 
         stocks = stock_query.find_stock_by_branch(
-            branch, stock_name, deactive)
+            branch,
+            stock_name,
+            category,
+            location,
+            deactive)
 
         return {"stocks": stocks}, 200
 
@@ -277,4 +283,3 @@ def change_activate_stock(stock_id, active_status):
             return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
 
         return jsonify(stock), 200
-

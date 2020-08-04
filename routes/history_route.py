@@ -51,13 +51,17 @@ def insert_history(parent_id):
 
         parent_name = "UNKNOWN"
         if data["category"] == "PC":
-            parent = computer_update.update_last_status_computer(parent_id, claims["branch"], data["status"])
+            parent = computer_update.update_last_status_computer(parent_id,
+                                                                 claims["branch"],
+                                                                 f'{data["status"]} : {data["note"]}')
             if parent is None:
                 return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
             parent_name = parent["client_name"]
 
         if data["category"] == "CCTV":
-            parent = cctv_update.update_last_status_cctv(parent_id, claims["branch"], data["status"])
+            parent = cctv_update.update_last_status_cctv(parent_id,
+                                                         claims["branch"],
+                                                         f'{data["status"]} : {data["note"]}')
             if parent is None:
                 return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
             parent_name = parent["cctv_name"]

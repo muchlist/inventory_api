@@ -24,7 +24,16 @@ def find_cctv_by_branch_ip_cctv_name(branch: str, ip_address: str, cctv_name: st
     if cctv_name:
         find_filter["cctv_name"] = {'$regex': f'.*{cctv_name.upper()}.*'}
 
-    cctv_coll = mongo.db.cctv.find(find_filter).sort(
+    projection = {"_id": 1,
+                  "branch": 1,
+                  "cctv_name": 1,
+                  "ip_address": 1,
+                  "last_ping": 1,
+                  "last_status": 1,
+                  "location": 1,
+                  }
+
+    cctv_coll = mongo.db.cctv.find(find_filter, projection).sort(
         [("last_ping", 1), ("cctv_name", 1)])
     cctvs = []
     for cctv in cctv_coll:

@@ -1,5 +1,12 @@
 {
   "version": 1,
+  "kalimantan": [
+    "BANJARMASIN",
+    "SAMPIT",
+    "KOTABARU",
+    "BATULICIN",
+    "KUMAI"
+  ],
   "divisions": [
     "SDM_UMUM",
     "OPERASIONAL",
@@ -107,7 +114,7 @@
     "PRESENSI",
     "LAINNYA"
   ],
-  "server_category":[
+  "server_category": [
     "SERVER",
     "ROUTER",
     "MANAGED SWITCH",
@@ -119,7 +126,7 @@
     "STABILIZER",
     "LAINNYA"
   ],
-  "history":[
+  "history": [
     "BAIK",
     "SEDANG DIPERBAIKI",
     "BERMASALAH",

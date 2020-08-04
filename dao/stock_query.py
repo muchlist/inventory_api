@@ -10,10 +10,18 @@ def get_stock(stock_id: str) -> dict:
     return mongo.db.stock.find_one(find_filter)
 
 
-def find_stock_by_branch(branch: str, stock_name: str, deactive: str) -> list:
+def find_stock_by_branch(branch: str,
+                         stock_name: str,
+                         category: str,
+                         location: str,
+                         deactive: str) -> list:
     find_filter = {}
     if branch:
         find_filter["branch"] = branch.upper()
+    if category:
+        find_filter["category"] = category.upper()
+    if location:
+        find_filter["location"] = location.upper()
     if deactive:
         if deactive == "yes":
             find_filter["deactive"] = True
