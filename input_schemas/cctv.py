@@ -30,3 +30,7 @@ class CctvEditSchema(Schema):
 class CctvAppendStatusSchema(Schema):
     ip_addresses = fields.List(fields.String(), required=True)
     ping_code = fields.Int(required=True)
+
+
+class CctvChangeActiveSchema(Schema):
+    timestamp = fields.DateTime(required=True)

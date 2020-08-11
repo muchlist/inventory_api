@@ -7,14 +7,14 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 from marshmallow import ValidationError
-from config import config as cf
 
+from config import config as cf
 from dao import (cctv_query,
                  cctv_update,
                  history_update)
-from dto.cctv_dto import CctvDto, CctvEditDto
+from dto.cctv_dto import CctvDto, CctvEditDto, CctvChangeActiveDto
 from dto.history_dto import HistoryDto
-from input_schemas.cctv import (CctvInsertSchema, CctvEditSchema, CctvAppendStatusSchema)
+from input_schemas.cctv import (CctvInsertSchema, CctvEditSchema, CctvAppendStatusSchema, CctvChangeActiveSchema)
 from validations.input_validation import is_ip_address_valid
 from validations.role_validation import isEndUser
 
@@ -76,13 +76,20 @@ def find_cctv():
         ip_address = request.args.get("ip_address")
         cctv_name = request.args.get("cctv_name")
         deactive = request.args.get("deactive")
+        location = request.args.get("location")
+        last_ping = request.args.get("last_ping")
         branch = claims["branch"]
 
         if request.args.get("branch"):
             branch = request.args.get("branch")
 
         cctvs = cctv_query.find_cctv_by_branch_ip_cctv_name(
-            branch, ip_address, cctv_name, deactive)
+            branch=branch,
+            location=location,
+            ip_address=ip_address,
+            cctv_name=cctv_name,
+            last_ping=last_ping,
+            deactive=deactive)
 
         return {"cctvs": cctvs}, 200
 
@@ -179,7 +186,7 @@ def detail_cctvs(cctv_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if cctv is None:
-            return {"msg": "gagal menghapus cctv, hanya dapat dihapus dua jam setelah pembuatan"}, 400
+            return {"msg": "Gagal menghapus cctv, batas waktu dua jam telah tercapai !"}, 400
 
         return {"msg": "cctv berhasil di hapus"}, 204
 
@@ -193,7 +200,6 @@ Append Status CCTV localhost:5001/cctvs/append
 
 @bp.route("/cctv-states-update", methods=['POST'])
 def append_cctv_ping_state():
-
     if request.method == 'POST':
 
         key = request.args.get("key")
@@ -214,7 +220,6 @@ def append_cctv_ping_state():
 
 @bp.route("/cctv-ip", methods=['GET'])
 def cctv_ip_list():
-
     if request.method == 'GET':
 
         key = request.args.get("key")
@@ -229,3 +234,51 @@ def cctv_ip_list():
 
         cctv_ip_address = cctv_query.find_cctv_ip_list(branch, location)
         return {"cctv_ip": cctv_ip_address}, 200
+
+
+"""
+------------------------------------------------------------------------------
+Change Status active komputer localhost:5001/computers/objectID/active
+------------------------------------------------------------------------------
+"""
+
+
+@bp.route("/cctvs/<cctv_id>/<active_status>", methods=['POST'])
+@jwt_required
+def change_activate_cctv(cctv_id, active_status):
+    if not ObjectId.is_valid(cctv_id):
+        return {"msg": "Object ID tidak valid"}, 400
+
+    claims = get_jwt_claims()
+
+    if request.method == 'POST':
+
+        schema = CctvChangeActiveSchema()
+        try:
+            data = schema.load(request.get_json())
+        except ValidationError:
+            return {"msg": "Input tidak valid"}, 400
+
+        if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
+            return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400
+
+        if not isEndUser(claims):
+            return {"msg": "User tidak memiliki hak akses"}, 400
+
+        change_active_dto = CctvChangeActiveDto(
+            filter_id=cctv_id,
+            filter_timestamp=data["timestamp"],
+            filter_branch=claims["branch"],
+            updated_at=datetime.now(),
+            deactive=active_status.upper() == "DEACTIVE"
+        )
+
+        try:
+            computer = cctv_update.change_activate_cctv(change_active_dto)
+        except:
+            return {"msg": "Gagal mengambil data dari database"}, 500
+
+        if computer is None:
+            return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
+
+        return jsonify(computer), 200

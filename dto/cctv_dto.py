@@ -42,3 +42,12 @@ class CctvEditDto(NamedTuple):
     tipe: str
     note: str
     deactive: bool
+
+
+class CctvChangeActiveDto(NamedTuple):
+    filter_id: str
+    filter_timestamp: datetime
+    filter_branch: str
+
+    updated_at: datetime
+    deactive: bool

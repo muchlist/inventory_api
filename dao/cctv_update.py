@@ -3,7 +3,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 
 from databases.db import mongo
-from dto.cctv_dto import CctvDto, CctvEditDto
+from dto.cctv_dto import CctvDto, CctvEditDto, CctvChangeActiveDto
 
 
 def create_cctv(data: CctvDto) -> dict:
@@ -83,6 +83,21 @@ def update_last_status_cctv(cctv_id: str, branch: str, last_status: str) -> dict
 
     cctv = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
     return cctv
+
+
+def change_activate_cctv(data: CctvChangeActiveDto) -> dict:
+    find = {
+        "_id": ObjectId(data.filter_id),
+        "branch": data.filter_branch,
+        "updated_at": data.filter_timestamp,
+    }
+    update = {
+        "updated_at": data.updated_at,
+        "deactive": data.deactive,
+    }
+
+    computer = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
+    return computer
 
 
 def append_status_ping_cctv(ip_address_list: list, ping_code: int) -> int:

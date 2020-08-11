@@ -10,7 +10,12 @@ def get_cctv(cctv_id: str) -> dict:
     return mongo.db.cctv.find_one(find_filter)
 
 
-def find_cctv_by_branch_ip_cctv_name(branch: str, ip_address: str, cctv_name: str, deactive: str) -> list:
+def find_cctv_by_branch_ip_cctv_name(branch: str,
+                                     location: str,
+                                     last_ping: str,
+                                     ip_address: str,
+                                     cctv_name: str,
+                                     deactive: str) -> list:
     find_filter = {}
     if branch:
         find_filter["branch"] = branch.upper()
@@ -21,6 +26,10 @@ def find_cctv_by_branch_ip_cctv_name(branch: str, ip_address: str, cctv_name: st
             find_filter["deactive"] = False
     if ip_address:
         find_filter["ip_address"] = ip_address
+    if last_ping:
+        find_filter["last_ping"] = last_ping.upper()
+    if location:
+        find_filter["location"] = location
     if cctv_name:
         find_filter["cctv_name"] = {'$regex': f'.*{cctv_name.upper()}.*'}
 
