@@ -16,7 +16,7 @@ from dto.cctv_dto import CctvDto, CctvEditDto, CctvChangeActiveDto
 from dto.history_dto import HistoryDto
 from input_schemas.cctv import (CctvInsertSchema, CctvEditSchema, CctvAppendStatusSchema, CctvChangeActiveSchema)
 from validations.input_validation import is_ip_address_valid
-from validations.role_validation import isEndUser
+from validations.role_validation import is_end_user
 
 bp = Blueprint('cctv_bp', __name__, url_prefix='/api')
 
@@ -42,7 +42,7 @@ def find_cctv():
             # return err.messages, 400
             return {"msg": "Input tidak valid"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
             return {"msg": "IP Address salah"}, 400
@@ -129,7 +129,7 @@ def detail_cctvs(cctv_id):
             # return err.messages, 400
             return {"msg": "Input tidak valid"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
             return {"msg": "IP Address salah"}, 400
@@ -262,7 +262,7 @@ def change_activate_cctv(cctv_id, active_status):
         if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
             return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
 
         change_active_dto = CctvChangeActiveDto(

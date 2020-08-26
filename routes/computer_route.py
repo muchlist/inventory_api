@@ -17,7 +17,7 @@ from input_schemas.computer import (ComputerInsertSchema,
                                     ComputerEditSchema,
                                     ComputerChangeActiveSchema)
 from validations.input_validation import is_ip_address_valid
-from validations.role_validation import isEndUser
+from validations.role_validation import is_end_user
 
 bp = Blueprint('computer_bp', __name__, url_prefix='/api')
 
@@ -42,7 +42,7 @@ def find_computers():
         except ValidationError:
             return {"msg": "Input tidak valid"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
             return {"msg": "IP Address salah"}, 400
@@ -136,7 +136,7 @@ def detail_computers(computer_id):
             return err.messages, 400
             # return {"msg": "Input tidak valid"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
         if not is_ip_address_valid(data["ip_address"]):
             return {"msg": "IP Address salah"}, 400
@@ -236,7 +236,7 @@ def change_activate_computers(computer_id, active_status):
         if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
             return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
 
         change_active_dto = ComputerChangeActiveDto(

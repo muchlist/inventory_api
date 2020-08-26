@@ -20,7 +20,7 @@ from input_schemas.stock import (StockInsertSchema,
                                  StockEditSchema,
                                  StockUseSchema,
                                  StockChangeActiveSchema)
-from validations.role_validation import isEndUser
+from validations.role_validation import is_end_user
 
 bp = Blueprint('stock_bp', __name__, url_prefix='/api')
 
@@ -46,7 +46,7 @@ def find_stock():
             return {"msg": "Input tidak valid"}, 400
             # return err.messages, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
 
         stock_dto = StockDto(
@@ -128,7 +128,7 @@ def detail_stock(stock_id):
             # return err.messages, 400
             return {"msg": "Input tidak valid"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 401
 
         stock_edit_dto = StockEditDto(
@@ -195,7 +195,7 @@ def use_stock(stock_id):
         # return err.messages, 400
         return {"msg": "Input tidak valid"}, 400
 
-    if not isEndUser(claims):
+    if not is_end_user(claims):
         return {"msg": "User tidak memiliki hak akses"}, 400
 
     mode_available = ["INCREMENT", "DECREMENT"]
@@ -263,7 +263,7 @@ def change_activate_stock(stock_id, active_status):
         if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
             return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400
 
-        if not isEndUser(claims):
+        if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
 
         change_active_dto = StockChangeActiveDto(

@@ -8,6 +8,7 @@ from databases.db import mongo
 from routes.cctv_route import bp as cctv_bp
 from routes.computer_route import bp as computer_bp
 from routes.history_route import bp as history_bp
+from routes.image_route import bp as image_bp
 from routes.option_route import bp as option_bp
 from routes.stock_route import bp as stock_bp
 from routes.user_route import bp as user_bp
@@ -48,6 +49,7 @@ app.register_blueprint(computer_bp)
 app.register_blueprint(option_bp)
 app.register_blueprint(cctv_bp)
 app.register_blueprint(stock_bp)
+app.register_blueprint(image_bp)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

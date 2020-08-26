@@ -1,6 +1,6 @@
-def isAdmin(claims: dict) -> bool:
+def is_admin(claims: dict) -> bool:
     return claims["isAdmin"]
 
 
-def isEndUser(claims: dict) -> bool:
+def is_end_user(claims: dict) -> bool:
     return claims["isEndUser"]

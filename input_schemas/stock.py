@@ -34,4 +34,3 @@ class StockUseSchema(Schema):
 
 class StockChangeActiveSchema(Schema):
     timestamp = fields.DateTime(required=True)
-

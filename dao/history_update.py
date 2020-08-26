@@ -1,5 +1,6 @@
-from bson import ObjectId
 from datetime import datetime
+
+from bson import ObjectId
 
 from databases.db import mongo
 from dto.history_dto import HistoryDto
@@ -29,4 +30,3 @@ def delete_history(history_id: str, branch: str, time_limit: datetime) -> dict:
     }
 
     return mongo.db.histories.find_one_and_delete(find_filter)
-

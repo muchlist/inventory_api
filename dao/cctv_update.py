@@ -7,7 +7,6 @@ from dto.cctv_dto import CctvDto, CctvEditDto, CctvChangeActiveDto
 
 
 def create_cctv(data: CctvDto) -> dict:
-
     ping_state_dict = {
         "code": 0,
         "time_date": datetime.now(),
@@ -31,6 +30,7 @@ def create_cctv(data: CctvDto) -> dict:
         "deactive": data.deactive,
         "ping_state": [ping_state_dict],
         "last_ping": "DOWN",
+        "image": ""
     }
 
     mongo.db.cctv.insert_one(data_insert)
@@ -55,6 +55,19 @@ def update_cctv(data: CctvEditDto) -> dict:
         "merk": data.merk,
         "note": data.note,
         "deactive": data.deactive,
+    }
+
+    cctv = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
+    return cctv
+
+
+def update_cctv_image(filter_id: str, image_path: str) -> dict:
+    find = {
+        "_id": ObjectId(filter_id)
+    }
+    update = {
+        "updated_at": datetime.now(),
+        "image": image_path
     }
 
     cctv = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)

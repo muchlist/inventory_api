@@ -79,7 +79,7 @@ Merubah dan mendelete user
 @bp.route('/users/<string:username>', methods=['PUT', 'DELETE'])
 @jwt_required
 def put_delete_user(username):
-    if not valid.isAdmin(get_jwt_claims()):
+    if not valid.is_admin(get_jwt_claims()):
         return {"msg": "user tidak memiliki authorisasi"}, 400
 
     if request.method == 'PUT':
@@ -120,7 +120,7 @@ Reset Password
 @bp.route('/reset/<string:username>', methods=['GET'])
 @jwt_required
 def reset_password_by_admin(username):
-    if not valid.isAdmin(get_jwt_claims()):
+    if not valid.is_admin(get_jwt_claims()):
         return {"msg": "user tidak memiliki authorisasi"}, 403
 
     if request.method == 'GET':

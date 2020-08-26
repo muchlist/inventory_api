@@ -10,6 +10,14 @@ def get_cctv(cctv_id: str) -> dict:
     return mongo.db.cctv.find_one(find_filter)
 
 
+def get_cctv_with_branch(cctv_id: str, branch: str) -> dict:
+    find_filter = {
+        '_id': ObjectId(cctv_id),
+        'branch': branch.upper()
+    }
+    return mongo.db.cctv.find_one(find_filter)
+
+
 def find_cctv_by_branch_ip_cctv_name(branch: str,
                                      location: str,
                                      last_ping: str,
@@ -40,12 +48,23 @@ def find_cctv_by_branch_ip_cctv_name(branch: str,
                   "last_ping": 1,
                   "last_status": 1,
                   "location": 1,
+                  "ping_state": 1
                   }
 
     cctv_coll = mongo.db.cctv.find(find_filter, projection).sort(
         [("last_ping", 1), ("last_status", -1), ("location", -1)])
     cctvs = []
+
     for cctv in cctv_coll:
+
+        # Inject sum ping state
+        sum_ping = 0
+        ping_list = cctv["ping_state"]
+        for ping in ping_list:
+            sum_ping += ping["code"]
+        del cctv["ping_state"]
+        cctv["ping_sum"] = sum_ping
+
         cctvs.append(cctv)
 
     return cctvs
