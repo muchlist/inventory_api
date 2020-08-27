@@ -1,5 +1,6 @@
 {
     "mongo_uri" : "mongodb://localhost:27017/inventaris",
-    "jwt_secret_key" : "",
+    "jwt_secret_key" : "example",
     "uploaded_image_dest" : "static/images/"
+    "cctv_secret_key": "example"
 }

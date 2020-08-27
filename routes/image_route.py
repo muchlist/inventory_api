@@ -1,4 +1,5 @@
 import os
+import time
 
 from bson.objectid import ObjectId
 from flask import Blueprint, request
@@ -49,7 +50,7 @@ def upload_image(cctv_id):
     extension = image_helper.get_extension(data['image'])
 
     # Memberikan Nama file dan ekstensi
-    file_name = f"{cctv_object['_id']}{extension}"
+    file_name = f"{cctv_object['_id']}-{int(time.time())}{extension}"
     folder = "cctv"
 
     # Menghapus Image existing
