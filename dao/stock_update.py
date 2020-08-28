@@ -32,6 +32,7 @@ def create_stock(data: StockDto) -> dict:
         "deactive": data.deactive,
         "increment": [data_increment_init, ],
         "decrement": [],
+        "image": ""
     }
 
     mongo.db.stock.insert_one(data_insert)
@@ -138,3 +139,17 @@ def change_activate_stock(data: StockChangeActiveDto) -> dict:
 
     stock = mongo.db.stock.find_one_and_update(find, {'$set': update}, return_document=True)
     return stock
+
+
+def update_stock_image(filter_id: str, image_path: str) -> dict:
+    find = {
+        "_id": ObjectId(filter_id)
+    }
+    update = {
+        "updated_at": datetime.now(),
+        "image": image_path
+    }
+
+    stock = mongo.db.stock.find_one_and_update(find, {'$set': update}, return_document=True)
+    return stock
+

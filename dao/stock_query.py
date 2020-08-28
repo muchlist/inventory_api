@@ -10,6 +10,14 @@ def get_stock(stock_id: str) -> dict:
     return mongo.db.stock.find_one(find_filter)
 
 
+def get_stock_with_branch(stock_id: str, branch:str) -> dict:
+    find_filter = {
+        '_id': ObjectId(stock_id),
+        'branch': branch.upper()
+    }
+    return mongo.db.stock.find_one(find_filter)
+
+
 def find_stock_by_branch(branch: str,
                          stock_name: str,
                          category: str,

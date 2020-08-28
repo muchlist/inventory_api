@@ -118,7 +118,7 @@ def get_history():
         except ValueError:
             return {"msg": "limit harus berupa angka"}, 400
 
-    branch = claims["branch"]
+    branch = ""
     if request.args.get("branch"):
         branch = request.args.get("branch")
 

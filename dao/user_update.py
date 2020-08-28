@@ -8,7 +8,7 @@ def insert_user(data: UserDto):
         "password": data.password,
         "email": data.email,
         "name": data.name.upper(),
-        "isAdmin": data.isAdmin,
+        "isAdmin": data.is_admin,
         "isEndUser": data.is_end_user,
         "branch": data.branch.upper(),
     }
@@ -28,7 +28,7 @@ def update_user(data: UserDto):
     update = {
         "name": data.name.upper(),
         "email": data.email,
-        "isAdmin": data.isAdmin,
+        "isAdmin": data.is_admin,
         "isEndUser": data.is_end_user,
         "branch": data.branch.upper(),
     }
