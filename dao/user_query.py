@@ -26,6 +26,18 @@ def get_many_by_name(name: str) -> list:
     return user_list
 
 
+def get_users_from_branch(branch: str) -> list:
+    user_collection = mongo.db.users.find(
+        {"branch": branch.upper()}, {"name": 1}).sort("name", 1)
+
+    user_list = []
+
+    for user in user_collection:
+        user_list.append(user)
+
+    return user_list
+
+
 def get_many() -> list:
     user_list = []
     result = mongo.db.users.find({}, {"password": 0})

@@ -107,8 +107,6 @@ api.com/histories?category=PC&branch=BAGENDANG
 @bp.route("/histories", methods=['GET'])
 @jwt_required
 def get_history():
-    claims = get_jwt_claims()
-
     category = request.args.get("category")
     limit = request.args.get("limit")
 
@@ -118,23 +116,53 @@ def get_history():
         except ValueError:
             return {"msg": "limit harus berupa angka"}, 400
 
+    """
+        Jika cabang luar kalimantan di includekan ke aplikasi maka filter by branch harus dijadikan
+        list dan di querry or ke mongodb
+    """
     branch = ""
     if request.args.get("branch"):
         branch = request.args.get("branch")
 
-    histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
-    # try:
-    #     histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
-    # except:
-    #     return {"message": "Gagal memanggil data dari database"}, 500
+    # histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
+    try:
+        histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
+    except:
+        return {"msg": "Gagal memanggil data dari database"}, 500
 
     return {"histories": histories}, 200
 
 
 """
 ------------------------------------------------------------------------------
-mengambil history per cabang dan per kategory
-api.com/histories?category=PC&branch=BAGENDANG
+mengambil history per user
+api.com/user-history/<Muchis>?limit=20
+------------------------------------------------------------------------------
+"""
+
+
+@bp.route("/user-history/<author>", methods=['GET'])
+@jwt_required
+def get_history_from_author(author):
+    limit = request.args.get("limit")
+
+    if limit:
+        try:
+            limit = int(limit)
+        except ValueError:
+            return {"msg": "limit harus berupa angka"}, 400
+
+    try:
+        histories = history_query.find_history_for_user(author, limit)
+    except:
+        return {"msg": "Gagal memanggil data dari database"}, 500
+
+    return {"histories": histories}, 200
+
+
+"""
+------------------------------------------------------------------------------
+Mendelete history
 ------------------------------------------------------------------------------
 """
 

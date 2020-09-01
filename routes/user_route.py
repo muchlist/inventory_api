@@ -117,6 +117,21 @@ def user_list():
 
 """
 ------------------------------------------------------------------------------
+List User by Branch just Name
+------------------------------------------------------------------------------
+"""
+
+
+@bp.route("/users-from/<branch>", methods=['GET'])
+@jwt_required
+def user_list_branch(branch):
+    users = user_query.get_users_from_branch(branch)
+
+    return jsonify(users), 200
+
+
+"""
+------------------------------------------------------------------------------
 Self Change Password
 ------------------------------------------------------------------------------
 """
