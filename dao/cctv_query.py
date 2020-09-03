@@ -63,7 +63,7 @@ def find_cctv_by_branch_ip_cctv_name(branch: str,
         for ping in ping_list:
             sum_ping += ping["code"]
         del cctv["ping_state"]
-        cctv["ping_sum"] = int(sum_ping / len(ping_list) * 100)
+        cctv["ping_sum"] = int(sum_ping / len(ping_list) * 50)
 
         cctvs.append(cctv)
 
