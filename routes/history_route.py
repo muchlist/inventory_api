@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_claims,
+    get_jwt_identity,
 )
 from marshmallow import ValidationError
 
@@ -29,9 +30,6 @@ Membuat dan mengambil Histories per parent
 def insert_history(parent_id):
     claims = get_jwt_claims()
 
-    if not ObjectId.is_valid(parent_id):
-        return {"msg": "Object ID tidak valid"}, 400
-
     if request.method == 'POST':
         schema = HistoryInsertSchema()
         try:
@@ -40,9 +38,13 @@ def insert_history(parent_id):
             # return err.messages, 400
             return {"msg": "Input tidak valid"}, 400
 
-        category_available = ["PC", "CCTV"]
+        category_available = ["PC", "CCTV", "DAILY"]
         if data["category"].upper() not in category_available:
             return {"msg": "Field category salah!"}, 400
+
+        if data["category"].upper() != "DAILY":
+            if not ObjectId.is_valid(parent_id):
+                return {"msg": "Object ID tidak valid"}, 400
 
         if data["date"] is None:
             data["date"] = datetime.now()
@@ -66,6 +68,10 @@ def insert_history(parent_id):
                 return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
             parent_name = parent["cctv_name"]
 
+        if data["category"] == "DAILY":
+            parent_name = claims["name"] + " DAILY"
+            parent_id = get_jwt_identity()
+
         history_dto = HistoryDto(parent_id,
                                  parent_name,
                                  data["category"],
@@ -73,7 +79,8 @@ def insert_history(parent_id):
                                  data["branch"],
                                  data["status"],
                                  data["note"],
-                                 data["date"])
+                                 data["date"],
+                                 get_jwt_identity())
 
         try:
             history_id = history_update.insert_history(history_dto)
@@ -82,12 +89,16 @@ def insert_history(parent_id):
 
         data["_id"] = history_id
         data["parent_id"] = parent_id
+        data["author_id"] = get_jwt_identity()
         data["parent_name"] = parent_name
         data["timestamp"] = datetime.now()
 
         return jsonify(data), 201
 
     if request.method == 'GET':
+        if not ObjectId.is_valid(parent_id):
+            return {"msg": "Object ID tidak valid"}, 400
+
         try:
             histories = history_query.find_history_for_parent(parent_id)
         except:

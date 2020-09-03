@@ -12,6 +12,7 @@ def insert_history(data: HistoryDto) -> str:
         "parent_name": data.parent_name,
         "category": data.category.upper(),
         "author": data.author.upper(),
+        "author_id": data.author_id.upper(),
         "branch": data.branch.upper(),
         "status": data.status.upper(),
         "note": data.note,

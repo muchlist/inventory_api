@@ -11,8 +11,8 @@ def find_history_for_parent(parent_id: str) -> list:
     return histories
 
 
-def find_history_for_user(author: str, limit: int) -> list:
-    find_filter = {"author": author.upper()}
+def find_history_for_user(author_id: str, limit: int) -> list:
+    find_filter = {"author_id": author_id}
     if not limit:
         limit = 100
 

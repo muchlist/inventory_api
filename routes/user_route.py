@@ -50,6 +50,7 @@ def login_user():
     response = {
                    'access_token': access_token,
                    'name': user['name'],
+                   'username': user['username'],
                    'isAdmin': user['isAdmin'],
                    'isEndUser': user['isEndUser'],
                    "branch": user["branch"],
