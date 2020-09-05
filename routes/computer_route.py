@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_claims,
+    get_jwt_identity,
 )
 from marshmallow import ValidationError
 
@@ -133,8 +134,8 @@ def detail_computers(computer_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return err.messages, 400
-            # return {"msg": "Input tidak valid"}, 400
+            # return err.messages, 400
+            return {"msg": str(err.messages)}, 400
 
         if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
@@ -188,7 +189,9 @@ def detail_computers(computer_id):
                                  result["branch"],
                                  "EDITED",
                                  "Detail komputer dirubah",
-                                 datetime.now())
+                                 datetime.now(),
+                                 get_jwt_identity(),
+                                 )
         history_update.insert_history(history_dto)
 
         return jsonify(result), 200
@@ -230,8 +233,8 @@ def change_activate_computers(computer_id, active_status):
         schema = ComputerChangeActiveSchema()
         try:
             data = schema.load(request.get_json())
-        except ValidationError:
-            return {"msg": "Input tidak valid"}, 400
+        except ValidationError as err:
+            return {"msg": str(err.messages)}, 400
 
         if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
             return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400

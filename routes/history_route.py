@@ -35,8 +35,7 @@ def insert_history(parent_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            # return err.messages, 400
-            return {"msg": "Input tidak valid"}, 400
+            return {"msg": str(err.messages)}, 400
 
         category_available = ["PC", "CCTV", "DAILY"]
         if data["category"].upper() not in category_available:

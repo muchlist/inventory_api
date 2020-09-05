@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_claims,
+    get_jwt_identity,
 )
 from marshmallow import ValidationError
 
@@ -43,7 +44,7 @@ def find_stock():
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            return {"msg": "Input tidak valid"}, 400
+            return {"msg": str(err.messages)}, 400
             # return err.messages, 400
 
         if not is_end_user(claims):
@@ -125,8 +126,7 @@ def detail_stock(stock_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            # return err.messages, 400
-            return {"msg": "Input tidak valid"}, 400
+            return {"msg": str(err.messages)}, 400
 
         if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 401
@@ -192,8 +192,7 @@ def use_stock(stock_id):
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        # return err.messages, 400
-        return {"msg": "Input tidak valid"}, 400
+        return {"msg": str(err.messages)}, 400
 
     if not is_end_user(claims):
         return {"msg": "User tidak memiliki hak akses"}, 400
@@ -238,7 +237,9 @@ def use_stock(stock_id):
                              result["branch"],
                              "CHANGE",
                              f'Jumlah stok {mode} {data["qty"]}',
-                             datetime.now())
+                             datetime.now(),
+                             get_jwt_identity(),
+                             )
     history_update.insert_history(history_dto)
 
     return jsonify(result), 200
@@ -257,8 +258,8 @@ def change_activate_stock(stock_id, active_status):
         schema = StockChangeActiveSchema()
         try:
             data = schema.load(request.get_json())
-        except ValidationError:
-            return {"msg": "Input tidak valid"}, 400
+        except ValidationError as err:
+            return {"msg": str(err.messages)}, 400
 
         if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
             return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400

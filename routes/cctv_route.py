@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_claims,
+    get_jwt_identity,
 )
 from marshmallow import ValidationError
 
@@ -39,8 +40,7 @@ def find_cctv():
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            # return err.messages, 400
-            return {"msg": "Input tidak valid"}, 400
+            return {"msg": str(err.messages)}, 400
 
         if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
@@ -126,8 +126,7 @@ def detail_cctvs(cctv_id):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            # return err.messages, 400
-            return {"msg": "Input tidak valid"}, 400
+            return {"msg": str(err.messages)}, 400
 
         if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
@@ -169,7 +168,9 @@ def detail_cctvs(cctv_id):
                                  result["branch"],
                                  "EDITED",
                                  "Detail cctv dirubah",
-                                 datetime.now())
+                                 datetime.now(),
+                                 get_jwt_identity(),
+                                 )
         history_update.insert_history(history_dto)
 
         return jsonify(result), 200
@@ -209,8 +210,8 @@ def append_cctv_ping_state():
         schema = CctvAppendStatusSchema()
         try:
             data = schema.load(request.get_json())
-        except ValidationError:
-            return {"msg": "Input tidak valid"}, 400
+        except ValidationError as err:
+            return {"msg": str(err.messages)}, 400
 
         response_code = cctv_update.append_status_ping_cctv(data["ip_addresses"], data["ping_code"])
         if response_code == 400:
@@ -256,8 +257,8 @@ def change_activate_cctv(cctv_id, active_status):
         schema = CctvChangeActiveSchema()
         try:
             data = schema.load(request.get_json())
-        except ValidationError:
-            return {"msg": "Input tidak valid"}, 400
+        except ValidationError as err:
+            return {"msg": str(err.messages)}, 400
 
         if active_status.upper() not in ["ACTIVE", "DEACTIVE"]:
             return {"msg": "Input tidak valid, ACTIVE, DEACTIVE"}, 400

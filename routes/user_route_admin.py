@@ -32,17 +32,16 @@ register
 
 
 @bp.route('/register', methods=['POST'])
-# @jwt_required
+@jwt_required
 def register_user():
-    # if not valid.isAdmin(get_jwt_claims()):
-    #     return {"message": "user tidak memiliki authorisasi"}, 403
+    if not valid.isAdmin(get_jwt_claims()):
+        return {"message": "user tidak memiliki authorisasi"}, 403
 
     schema = UserRegisterSchema()
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        # return err.messages, 400
-        return {"msg": "Input tidak valid"}, 400
+        return {"msg": str(err.messages)}, 400
 
     # hash password
     pw_hash = bcrypt.generate_password_hash(
@@ -87,8 +86,7 @@ def put_delete_user(username):
         try:
             data = schema.load(request.get_json())
         except ValidationError as err:
-            # return err.messages, 400
-            return {"msg": "Input tidak valid"}, 400
+            return {"msg": str(err.messages)}, 400
 
         if not user_eksis(username):
             return {"msg": f"user {username} tidak ditemukan"}, 400

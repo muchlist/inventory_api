@@ -31,8 +31,7 @@ def login_user():
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        # return err.messages, 400
-        return {"msg": "Input tidak valid"}, 400
+        return {"msg": str(err.messages)}, 400
 
     # mendapatkan data user termasuk password
     user = user_query.get_one(data["username"])
@@ -145,8 +144,7 @@ def change_password():
     try:
         data = schema.load(request.get_json())
     except ValidationError as err:
-        # return err.messages, 400
-        return {"msg": "Input tidak valid"}, 400
+        return {"msg": str(err.messages)}, 400
 
     user_username = get_jwt_identity()
 
