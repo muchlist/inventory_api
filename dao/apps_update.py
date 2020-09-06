@@ -35,7 +35,7 @@ def update_apps(data: AppsEditDto) -> dict:
         "apps_name": data.apps_name.upper(),
         "description": data.description,
         "programmers": [x.upper() for x in data.programmers],
-        "branchs": [x.upper() for x in data.branches],
+        "branches": [x.upper() for x in data.branches],
         "note": data.note,
     }
 
