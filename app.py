@@ -6,6 +6,7 @@ from config import config as cf
 from dao.user_query import get_one_without_password
 from databases.db import mongo
 from routes.apps_route import bp as apps_bp
+from routes.apps_history_route import bp as apps_history_bp
 from routes.cctv_route import bp as cctv_bp
 from routes.computer_route import bp as computer_bp
 from routes.history_route import bp as history_bp
@@ -52,6 +53,7 @@ app.register_blueprint(option_bp)
 app.register_blueprint(cctv_bp)
 app.register_blueprint(stock_bp)
 app.register_blueprint(apps_bp)
+app.register_blueprint(apps_history_bp)
 app.register_blueprint(image_bp)
 
 if __name__ == '__main__':

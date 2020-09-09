@@ -15,7 +15,7 @@ def insert_history(data: HistoryDto) -> str:
         "author_id": data.author_id.upper(),
         "branch": data.branch.upper(),
         "status": data.status.upper(),
-        "note": data.note,
+        "note": data.note.lower(),
         "date": data.date,
         "timestamp": datetime.now(),
     }
