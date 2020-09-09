@@ -5,6 +5,7 @@ from flask_uploads import configure_uploads, patch_request_class
 from config import config as cf
 from dao.user_query import get_one_without_password
 from databases.db import mongo
+from routes.apps_route import bp as apps_bp
 from routes.cctv_route import bp as cctv_bp
 from routes.computer_route import bp as computer_bp
 from routes.history_route import bp as history_bp
@@ -35,11 +36,12 @@ app.json_encoder = JSONEncoder
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
     user = get_one_without_password(identity)
-    return {"name": user["name"],
-            "branch": user["branch"],
-            "isAdmin": user["isAdmin"],
-            "isEndUser": user["isEndUser"],
-            }
+    return {
+        "name": user["name"],
+        "branch": user["branch"],
+        "isAdmin": user["isAdmin"],
+        "isEndUser": user["isEndUser"],
+    }
 
 
 app.register_blueprint(user_bp)
@@ -49,6 +51,7 @@ app.register_blueprint(computer_bp)
 app.register_blueprint(option_bp)
 app.register_blueprint(cctv_bp)
 app.register_blueprint(stock_bp)
+app.register_blueprint(apps_bp)
 app.register_blueprint(image_bp)
 
 if __name__ == '__main__':
