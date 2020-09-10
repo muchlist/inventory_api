@@ -11,8 +11,10 @@ from marshmallow import ValidationError
 
 from dao import (apps_histo_query,
                  apps_histo_update,
-                 apps_query)
+                 apps_update,
+                 history_update)
 from dto.apps_histo_dto import AppsHistoDto, AppsEditHistoDto
+from dto.history_dto import HistoryDto
 from input_schemas.apps_history import (AppsHistoryInsertSchema, AppsHistoryEditSchema)
 
 bp = Blueprint('apps_history_bp', __name__, url_prefix='/api')
@@ -39,22 +41,31 @@ def apps_history_per_parent(parent_id):
         if not ObjectId.is_valid(parent_id):
             return {"msg": "Object ID tidak valid"}, 400
 
-        parent_apps = apps_query.get_apps(parent_id)
+        increment_counter = 0
+        if data["is_complete"]:
+            increment_counter = 1
+
+        parent_apps = apps_update.increment_counter(parent_id, increment_counter)
         if parent_apps is None:
             return {"msg": "Kesalahan pada ID Aplikasi"}, 400
 
         start_date = data["start_date"]
-        end_date = data["end_date"]
-        time_delta = end_date - start_date
-        total_second = time_delta.total_seconds()
-        duration = int(total_second / 60)
+
+        if not data["end_date"]:
+            end_date = None
+            duration = 0
+        else:
+            end_date = data["end_date"]
+            time_delta = end_date - start_date
+            total_second = time_delta.total_seconds()
+            duration = int(total_second / 60)
 
         apps_history_dto = AppsHistoDto(
             author=claims["name"],
             author_id=get_jwt_identity(),
             branch=claims["branch"],
             location=data["location"],
-            category=data["category"],
+            status=data["status"],
             created_at=datetime.now(),
             updated_at=datetime.now(),
             start_date=start_date,
@@ -63,13 +74,31 @@ def apps_history_per_parent(parent_id):
             desc=data["desc"],
             parent_id=parent_id,
             parent_name=parent_apps["apps_name"],
-            duration=duration
+            duration=duration,
+            resolve_note=data["resolve_note"],
+            pic=data["pic"],
+            is_complete=data["is_complete"],
         )
 
         try:
             history_id = apps_histo_update.insert_apps_history(apps_history_dto)
         except:
             return {"msg": "Gagal menyimpan data ke database"}, 500
+
+        # Menambahkan simple history jika is_complete
+        if data["is_complete"]:
+            note = f"prob: {data['title']}\nsolu: {data['resolve_note']}"
+            history_dto = HistoryDto(history_id,
+                                     parent_apps["apps_name"],
+                                     "APPLICATION",
+                                     claims["name"],
+                                     claims["branch"],
+                                     data["status"],
+                                     note,
+                                     datetime.now(),
+                                     get_jwt_identity(),
+                                     )
+            history_update.insert_history(history_dto)
 
         return {"msg": f"Berhasil menambahkan riwayat aplikasi dengan id {history_id}"}, 201
 
@@ -136,7 +165,7 @@ def detail_apps_history(history_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if apps_histo is None:
-            return {"msg": "Cctv dengan ID tersebut tidak ditemukan"}, 404
+            return {"msg": "Riwayat dengan ID tersebut tidak ditemukan"}, 404
 
         return jsonify(apps_histo), 200
 
@@ -148,10 +177,14 @@ def detail_apps_history(history_id):
             return {"msg": str(err.messages)}, 400
 
         start_date = data["start_date"]
-        end_date = data["end_date"]
-        time_delta = end_date - start_date
-        total_second = time_delta.total_seconds()
-        duration = int(total_second / 60)
+        if not data["end_date"]:
+            end_date = None
+            duration = 0
+        else:
+            end_date = data["end_date"]
+            time_delta = end_date - start_date
+            total_second = time_delta.total_seconds()
+            duration = int(total_second / 60)
 
         edit_apps_history_dto = AppsEditHistoDto(
             filter_id=history_id,
@@ -162,23 +195,45 @@ def detail_apps_history(history_id):
             author_id=get_jwt_identity(),
             branch=claims["branch"],
             location=data["location"],
-            category=data["category"],
+            status=data["status"],
             start_date=start_date,
             end_date=end_date,
             title=data["title"],
             desc=data["desc"],
-            duration=duration
+            duration=duration,
+            resolve_note=data["resolve_note"],
+            pic=data["pic"],
+            is_complete=data["is_complete"],
         )
 
         try:
-            history = apps_histo_update.update_apps_histo(edit_apps_history_dto)
+            history_app = apps_histo_update.update_apps_histo(edit_apps_history_dto)
         except:
             return {"msg": "Gagal menyimpan data ke database"}, 500
 
-        if history is None:
+        if history_app is None:
             return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
 
-        return jsonify(history), 200
+        # Menambahkan counter pada parent
+        if data["is_complete"]:
+            apps_update.increment_counter(history_app["parent_id"], 1)
+
+        # Menambahkan simple history jika is_complete
+        if data["is_complete"]:
+            note = f"prob: {data['title']}\nsolu: {data['resolve_note']}"
+            history_dto = HistoryDto(history_id,
+                                     history_app["parent_name"],
+                                     "APPLICATION",
+                                     claims["name"],
+                                     claims["branch"],
+                                     data["status"],
+                                     note,
+                                     datetime.now(),
+                                     get_jwt_identity(),
+                                     )
+            history_update.insert_history(history_dto)
+
+        return jsonify(history_app), 200
 
     if request.method == 'DELETE':
         # dua jam kurang dari sekarang
@@ -190,5 +245,7 @@ def detail_apps_history(history_id):
             return {"msg": "Gagal memanggil data dari database"}, 500
         if history is None:
             return {"msg": "Gagal menghapus riwayat, batas waktu dua jam telah tercapai !"}, 400
+
+        apps_update.increment_counter(history["parent_id"], -1)
 
         return {"msg": "history berhasil dihapus"}, 204

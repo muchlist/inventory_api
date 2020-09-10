@@ -16,9 +16,11 @@ def find_apps_history_for_parent_app(parent_id: str) -> list:
                   "parent_name": 1,
                   "title": 1,
                   "desc": 1,
+                  "resolve_note": 1,
                   "duration_minute": 1,
-                  "category": 1,
-                  "start_date": 1
+                  "status": 1,
+                  "start_date": 1,
+                  "is_complete": 1,
                   }
     histories_coll = mongo.db.apps_histories.find(find_filter, projection).sort("_id", -1)
     histories = []
@@ -44,9 +46,11 @@ def find_histories_by_name_branch_category(app_name: str, branch: str, category:
         "parent_name": 1,
         "title": 1,
         "desc": 1,
+        "resolve_note": 1,
         "duration_minute": 1,
-        "category": 1,
-        "start_date": 1
+        "status": 1,
+        "start_date": 1,
+        "is_complete": 1,
     }
 
     histories_coll = mongo.db.apps_histories.find(

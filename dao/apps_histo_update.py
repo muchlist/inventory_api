@@ -14,14 +14,17 @@ def insert_apps_history(data: AppsHistoDto) -> str:
         "desc": data.desc.lower(),
         "parent_id": str(data.parent_id),
         "parent_name": data.parent_name,
-        "category": data.category.upper(),
+        "status": data.status.upper(),
         "author": data.author.upper(),
         "author_id": data.author_id.upper(),
         "branch": data.branch.upper(),
         "location": data.location,
         "start_date": data.start_date,
         "end_date": data.end_date,
+        "is_complete": data.is_complete,
         "duration_minute": data.duration,
+        "resolve_note": data.resolve_note,
+        "pic": data.pic
     }
 
     return mongo.db.apps_histories.insert_one(data_insert).inserted_id
@@ -32,18 +35,22 @@ def update_apps_histo(data: AppsEditHistoDto) -> dict:
         "_id": ObjectId(data.filter_id),
         "branch": data.filter_branch,
         "updated_at": data.filter_timestamp,
+        "is_complete": False,
     }
     update = {
         "updated_at": datetime.now(),
         "title": data.title.upper(),
         "desc": data.desc.lower(),
-        "category": data.category.upper(),  # Api down , jaringan, unknown
+        "status": data.status.upper(),  # Api down , jaringan, unknown
         "author": data.author.upper(),
         "author_id": data.author_id.upper(),
         "location": data.location,
         "start_date": data.start_date,
         "end_date": data.end_date,
+        "is_complete": data.is_complete,
         "duration_minute": data.duration,
+        "resolve_note": data.resolve_note,
+        "pic": data.pic
     }
 
     apps_histories = mongo.db.apps_histories.find_one_and_update(find, {'$set': update}, return_document=True)

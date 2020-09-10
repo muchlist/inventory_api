@@ -1,10 +1,9 @@
-import time
 from datetime import datetime
 
 from bson.objectid import ObjectId
 
 from databases.db import mongo
-from dto.apps_dto import AppsDto, AppsEditDto, AppsCounterDto
+from dto.apps_dto import AppsDto, AppsEditDto
 
 
 def create_apps(data: AppsDto) -> dict:
@@ -17,7 +16,6 @@ def create_apps(data: AppsDto) -> dict:
         "branches": [x.upper() for x in data.branches],
         "note": data.note,
         "trouble_count": 0,
-        "trouble_minute_count": 0
     }
 
     mongo.db.apps.insert_one(data_insert)
@@ -51,23 +49,20 @@ def reset_counter(apps_id: str, time_stamp: datetime) -> dict:
 
     update = {
         '$set': {"updated_at": datetime.now(),
-                 "trouble_count": 0,
-                 "trouble_minute_count": 0},
+                 "trouble_count": 0, },
     }
 
     apps = mongo.db.apps.find_one_and_update(find, update, return_document=True)
     return apps
 
 
-def increment_counter(data: AppsCounterDto) -> dict:
-
+def increment_counter(filter_id: str, trouble: int) -> dict:
     find = {
-        "_id": ObjectId(data.filter_id),
+        "_id": ObjectId(filter_id),
     }
 
     update = {
-        '$inc': {"trouble_count": data.trouble,
-                 "trouble_minute_count": data.minute},
+        '$inc': {"trouble_count": trouble},
     }
 
     apps = mongo.db.apps.find_one_and_update(find, update, return_document=True)

@@ -7,7 +7,7 @@ class AppsHistoDto(NamedTuple):
     updated_at: datetime
     parent_id: str
     parent_name: str
-    category: str
+    status: str
     author: str
     author_id: str
     branch: str
@@ -17,6 +17,9 @@ class AppsHistoDto(NamedTuple):
     duration: int
     title: str
     desc: str
+    resolve_note: str
+    pic: str
+    is_complete: bool
 
 
 class AppsEditHistoDto(NamedTuple):
@@ -24,7 +27,7 @@ class AppsEditHistoDto(NamedTuple):
     filter_timestamp: datetime
     filter_branch: str
 
-    category: str
+    status: str
     author: str
     author_id: str
     branch: str
@@ -34,3 +37,6 @@ class AppsEditHistoDto(NamedTuple):
     duration: int
     title: str
     desc: str
+    resolve_note: str
+    pic: str
+    is_complete: bool
