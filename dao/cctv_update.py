@@ -109,8 +109,8 @@ def change_activate_cctv(data: CctvChangeActiveDto) -> dict:
         "deactive": data.deactive,
     }
 
-    computer = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
-    return computer
+    cctv = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
+    return cctv
 
 
 def append_status_ping_cctv(ip_address_list: list, ping_code: int) -> int:
