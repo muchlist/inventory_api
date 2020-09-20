@@ -30,7 +30,6 @@ class HandheldEditDto(NamedTuple):
     ip_address: str
     inventory_number: str
     author: str
-    branch: str
     location: str
     year: datetime
     merk: str

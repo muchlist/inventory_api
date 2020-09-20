@@ -81,7 +81,7 @@ def update_last_status_handheld(hh_id: str, branch: str, last_status: str) -> di
     return hh
 
 
-def change_activate_cctv(data: HandheldChangeActiveDto) -> dict:
+def change_activate_handheld(data: HandheldChangeActiveDto) -> dict:
     find = {
         "_id": ObjectId(data.filter_id),
         "branch": data.filter_branch,
