@@ -43,7 +43,6 @@ def update_handheld(data: HandheldEditDto) -> dict:
         "ip_address": data.ip_address,
         "inventory_number": data.inventory_number,
         "author": data.author,
-        "branch": data.branch.upper(),
         "location": data.location,
         "year": data.year,
         "merk": data.merk,
