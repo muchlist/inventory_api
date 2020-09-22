@@ -143,5 +143,14 @@
     "DIMUSNAHKAN",
     "HILANG",
     "LAINNYA"
+  ],
+  "app_history": [
+    "DOWN",
+    "LAMBAT",
+    "FORCE CLOSE",
+    "BUG",
+    "ERROR",
+    "JARINGAN",
+    "LAINNYA"
   ]
 }
