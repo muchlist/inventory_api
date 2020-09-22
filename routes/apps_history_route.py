@@ -51,14 +51,23 @@ def apps_history_per_parent(parent_id):
 
         start_date = data["start_date"]
 
-        if not data["end_date"]:
-            end_date = None
-            duration = 0
-        else:
+        if "end_date" in data:
             end_date = data["end_date"]
             time_delta = end_date - start_date
             total_second = time_delta.total_seconds()
             duration = int(total_second / 60)
+        else:
+            end_date = None
+            duration = 0
+
+        # if not data["end_date"]:
+        #     end_date = None
+        #     duration = 0
+        # else:
+        #     end_date = data["end_date"]
+        #     time_delta = end_date - start_date
+        #     total_second = time_delta.total_seconds()
+        #     duration = int(total_second / 60)
 
         apps_history_dto = AppsHistoDto(
             author=claims["name"],
