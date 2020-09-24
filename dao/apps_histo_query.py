@@ -33,14 +33,14 @@ def find_apps_history_for_parent_app(parent_id: str) -> list:
     return histories
 
 
-def find_histories_by_name_branch_category(app_name: str, branch: str, category: str, limit: int) -> list:
+def find_histories_by_name_branch_category(app_name: str, branch: str, status: str, limit: int) -> list:
     find_filter = {}
     if app_name:
         find_filter["parent_name"] = app_name.upper()
     if branch:
         find_filter["branch"] = branch.upper()
-    if category:
-        find_filter["category"] = category.upper()
+    if status:
+        find_filter["status"] = status.upper()
     if not limit:
         limit = 100
 

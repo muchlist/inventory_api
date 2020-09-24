@@ -136,7 +136,7 @@ api.com/apps-histories?category=Jaringan&branch=BANJARMASIN
 def find_apps_history():
     app_name = request.args.get("app_name")
     branch = request.args.get("branch")
-    category = request.args.get("category")
+    status = request.args.get("status")
     limit = request.args.get("limit")
     if limit:
         try:
@@ -145,7 +145,7 @@ def find_apps_history():
             return {"msg": "limit harus berupa angka"}, 400
 
     try:
-        histories = apps_histo_query.find_histories_by_name_branch_category(app_name, branch, category, limit)
+        histories = apps_histo_query.find_histories_by_name_branch_category(app_name, branch, status, limit)
     except:
         return {"msg": "Gagal memanggil data dari database"}, 500
 
