@@ -96,7 +96,7 @@ def apps_history_per_parent(parent_id):
 
         # Menambahkan simple history jika is_complete
         if data["is_complete"]:
-            note = f"prob: {data['title']}\nsolu: {data['resolve_note']}"
+            note = f"prob: {data['desc']}\nsolu: {data['resolve_note']}"
             history_dto = HistoryDto(history_id,
                                      parent_apps["apps_name"],
                                      "APPLICATION",
@@ -229,7 +229,7 @@ def detail_apps_history(history_id):
 
         # Menambahkan simple history jika is_complete
         if data["is_complete"]:
-            note = f"prob: {data['title']}\nsolu: {data['resolve_note']}"
+            note = f"prob: {data['desc']}\nsolu: {data['resolve_note']}"
             history_dto = HistoryDto(history_id,
                                      history_app["parent_name"],
                                      "APPLICATION",
