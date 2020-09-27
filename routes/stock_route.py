@@ -236,7 +236,7 @@ def use_stock(stock_id):
                              claims["name"],
                              result["branch"],
                              "CHANGE",
-                             f'Jumlah stok {mode} {data["qty"]}',
+                             f'Jumlah stok {mode} {data["qty"]} - {data["note"]}',
                              datetime.now(),
                              get_jwt_identity(),
                              )
