@@ -199,7 +199,7 @@ def detail_computers(computer_id):
     if request.method == 'DELETE':
 
         # dua jam kurang dari sekarang
-        time_limit = datetime.now() - timedelta(hours=2)
+        time_limit = datetime.now() - timedelta(hours=24)
 
         try:
             computer = computer_update.delete_computer(
@@ -208,7 +208,7 @@ def detail_computers(computer_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if computer is None:
-            return {"msg": "Gagal menghapus komputer, batas waktu dua jam telah tercapai !"}, 400
+            return {"msg": "Gagal menghapus komputer, batas waktu 24 jam telah tercapai !"}, 400
 
         return {"msg": "komputer berhasil di hapus"}, 204
 

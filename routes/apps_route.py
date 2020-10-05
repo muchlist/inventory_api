@@ -133,7 +133,7 @@ def detail_apps(apps_id):
     if request.method == 'DELETE':
 
         # dua jam kurang dari sekarang
-        time_limit = datetime.now() - timedelta(hours=2)
+        time_limit = datetime.now() - timedelta(hours=24)
 
         try:
             apps = apps_update.delete_apps(
@@ -142,6 +142,6 @@ def detail_apps(apps_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if apps is None:
-            return {"msg": "Gagal menghapus aplikasi, batas waktu dua jam telah tercapai !"}, 400
+            return {"msg": "Gagal menghapus aplikasi, batas waktu 24 jam telah tercapai !"}, 400
 
         return {"msg": "Aplikasi berhasil di hapus"}, 204

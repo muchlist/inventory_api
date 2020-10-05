@@ -246,14 +246,14 @@ def detail_apps_history(history_id):
 
     if request.method == 'DELETE':
         # dua jam kurang dari sekarang
-        time_limit = datetime.now() - timedelta(hours=2)
+        time_limit = datetime.now() - timedelta(hours=24)
 
         try:
             history = apps_histo_update.delete_apps_history(history_id, claims["branch"], time_limit)
         except:
             return {"msg": "Gagal memanggil data dari database"}, 500
         if history is None:
-            return {"msg": "Gagal menghapus riwayat, batas waktu dua jam telah tercapai !"}, 400
+            return {"msg": "Gagal menghapus riwayat, batas waktu 24 jam telah tercapai !"}, 400
 
         apps_update.increment_counter(history["parent_id"], -1)
 

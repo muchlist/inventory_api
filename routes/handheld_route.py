@@ -166,7 +166,7 @@ def detail_computers(handheld_id):
     if request.method == 'DELETE':
 
         # dua jam kurang dari sekarang
-        time_limit = datetime.now() - timedelta(hours=2)
+        time_limit = datetime.now() - timedelta(hours=24)
 
         try:
             handheld = handheld_update.delete_handheld(
@@ -175,7 +175,7 @@ def detail_computers(handheld_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if handheld is None:
-            return {"msg": "Gagal menghapus handheld, batas waktu dua jam telah tercapai !"}, 400
+            return {"msg": "Gagal menghapus handheld, batas waktu 24 jam telah tercapai !"}, 400
 
         return {"msg": "Handheld berhasil di hapus"}, 204
 

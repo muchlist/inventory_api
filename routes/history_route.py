@@ -185,13 +185,13 @@ def delete_history(history_id):
         return {"msg": "Object ID tidak valid"}, 400
 
     # dua jam kurang dari sekarang
-    time_limit = datetime.now() - timedelta(hours=2)
+    time_limit = datetime.now() - timedelta(hours=24)
 
     try:
         history = history_update.delete_history(history_id, claims["branch"], time_limit)
     except:
         return {"msg": "Gagal memanggil data dari database"}, 500
     if history is None:
-        return {"msg": "Gagal menghapus riwayat, batas waktu dua jam telah tercapai !"}, 400
+        return {"msg": "Gagal menghapus riwayat, batas waktu 24 jam telah tercapai !"}, 400
 
     return {"msg": "history berhasil dihapus"}, 204

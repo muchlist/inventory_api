@@ -178,7 +178,7 @@ def detail_cctvs(cctv_id):
     if request.method == 'DELETE':
 
         # dua jam kurang dari sekarang
-        time_limit = datetime.now() - timedelta(hours=2)
+        time_limit = datetime.now() - timedelta(hours=24)
 
         try:
             cctv = cctv_update.delete_cctv(
@@ -187,7 +187,7 @@ def detail_cctvs(cctv_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if cctv is None:
-            return {"msg": "Gagal menghapus cctv, batas waktu dua jam telah tercapai !"}, 400
+            return {"msg": "Gagal menghapus cctv, batas waktu 24 jam telah tercapai !"}, 400
 
         return {"msg": "cctv berhasil di hapus"}, 204
 
