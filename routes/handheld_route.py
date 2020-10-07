@@ -151,7 +151,7 @@ def detail_computers(handheld_id):
 
         history_dto = HistoryDto(result["_id"],
                                  result["handheld_name"],
-                                 "Handheld",
+                                 "HANDHELD",
                                  claims["name"],
                                  result["branch"],
                                  "EDITED",

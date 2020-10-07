@@ -12,7 +12,7 @@ from marshmallow import ValidationError
 from dao import (history_query,
                  history_update,
                  computer_update,
-                 cctv_update)
+                 cctv_update, handheld_update)
 from dto.history_dto import HistoryDto
 from input_schemas.history import (HistoryInsertSchema)
 
@@ -37,10 +37,11 @@ def insert_history(parent_id):
         except ValidationError as err:
             return {"msg": str(err.messages)}, 400
 
-        category_available = ["PC", "CCTV", "DAILY"]
+        category_available = ["PC", "CCTV", "DAILY", "HANDHELD"]
         if data["category"].upper() not in category_available:
             return {"msg": "Field category salah!"}, 400
 
+        #karena daily tidak memiliki parent maka perlu dicek ObjekID nya
         if data["category"].upper() != "DAILY":
             if not ObjectId.is_valid(parent_id):
                 return {"msg": "Object ID tidak valid"}, 400
@@ -66,6 +67,14 @@ def insert_history(parent_id):
             if parent is None:
                 return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
             parent_name = parent["cctv_name"]
+
+        if data["category"] == "HANDHELD":
+            parent = handheld_update.update_last_status_handheld(parent_id,
+                                                         claims["branch"],
+                                                         f'{data["status"]} : {data["note"]}')
+            if parent is None:
+                return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
+            parent_name = parent["handheld_name"]
 
         if data["category"] == "DAILY":
             parent_name = claims["name"] + " DAILY"
