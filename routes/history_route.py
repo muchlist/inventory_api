@@ -41,7 +41,7 @@ def insert_history(parent_id):
         if data["category"].upper() not in category_available:
             return {"msg": "Field category salah!"}, 400
 
-        #karena daily tidak memiliki parent maka perlu dicek ObjekID nya
+        # karena daily tidak memiliki parent maka perlu dicek ObjekID nya
         if data["category"].upper() != "DAILY":
             if not ObjectId.is_valid(parent_id):
                 return {"msg": "Object ID tidak valid"}, 400
@@ -70,8 +70,8 @@ def insert_history(parent_id):
 
         if data["category"] == "HANDHELD":
             parent = handheld_update.update_last_status_handheld(parent_id,
-                                                         claims["branch"],
-                                                         f'{data["status"]} : {data["note"]}')
+                                                                 claims["branch"],
+                                                                 f'{data["status"]} : {data["note"]}')
             if parent is None:
                 return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
             parent_name = parent["handheld_name"]
