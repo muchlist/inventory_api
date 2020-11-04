@@ -256,7 +256,7 @@ def delete_history(history_id):
         if data["category"].upper() not in category_available:
             return {"msg": "Category tidak valid!"}, 400
 
-        start_date = data["start_date"]
+        start_date = data["date"]
         if not data["end_date"]:
             end_date = None
             duration = 0
