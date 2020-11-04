@@ -99,7 +99,7 @@ def delete_case_handheld(handheld_id: str, branch: str, case_id: str) -> dict:
         "branch": branch.upper(),
     }
     update = {
-        '$pop': {"case": {"case_id": case_id}},
+        '$pull': {"case": {"case_id": case_id}},
     }
 
     handheld = mongo.db.handheld.find_one_and_update(find, update, return_document=True)

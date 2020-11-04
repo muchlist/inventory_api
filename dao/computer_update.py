@@ -116,7 +116,7 @@ def delete_case_computer(computer_id: str, branch: str, case_id: str) -> dict:
         "branch": branch.upper(),
     }
     update = {
-        '$pop': {"case": {"case_id": case_id}},
+        '$pull': {"case": {"case_id": case_id}},
     }
 
     computer = mongo.db.computer.find_one_and_update(find, update, return_document=True)

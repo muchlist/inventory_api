@@ -118,7 +118,7 @@ def delete_case_cctv(cctv_id: str, branch: str, case_id: str) -> dict:
         "branch": branch.upper(),
     }
     update = {
-        '$pop': {"case": {"case_id": case_id}},
+        '$pull': {"case": {"case_id": case_id}},
     }
 
     cctv = mongo.db.cctv.find_one_and_update(find, update, return_document=True)
