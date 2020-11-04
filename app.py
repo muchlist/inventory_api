@@ -10,7 +10,8 @@ from routes.apps_history_route import bp as apps_history_bp
 from routes.cctv_route import bp as cctv_bp
 from routes.computer_route import bp as computer_bp
 from routes.handheld_route import bp as handheld_bp
-from routes.history_route import bp as history_bp
+# from routes.history_route import bp as history_bp
+from routes.history2_route import bp as history_bp
 from routes.image_route import bp as image_bp
 from routes.option_route import bp as option_bp
 from routes.stock_route import bp as stock_bp

@@ -7,7 +7,6 @@ from dto.handheld_dto import HandheldDto, HandheldEditDto, HandheldChangeActiveD
 
 
 def create_handheld(data: HandheldDto) -> dict:
-
     data_insert = {
         "created_at": data.created_at,
         "updated_at": data.updated_at,
@@ -24,6 +23,7 @@ def create_handheld(data: HandheldDto) -> dict:
         "phone": data.phone,
         "last_status": data.last_status,
         "deactive": data.deactive,
+        "case": [],
     }
 
     mongo.db.handheld.insert_one(data_insert)
@@ -52,8 +52,8 @@ def update_handheld(data: HandheldEditDto) -> dict:
         "deactive": data.deactive,
     }
 
-    cctv = mongo.db.handheld.find_one_and_update(find, {'$set': update}, return_document=True)
-    return cctv
+    handheld = mongo.db.handheld.find_one_and_update(find, {'$set': update}, return_document=True)
+    return handheld
 
 
 def delete_handheld(hh_id: str, branch: str, time_limit: datetime) -> dict:
@@ -78,6 +78,32 @@ def update_last_status_handheld(hh_id: str, branch: str, last_status: str) -> di
 
     hh = mongo.db.handheld.find_one_and_update(find, {'$set': update}, return_document=True)
     return hh
+
+
+def insert_case_handheld(handheld_id: str, branch: str, case_id: str, case: str) -> dict:
+    find = {
+        "_id": ObjectId(handheld_id),
+        "branch": branch.upper(),
+    }
+    update = {
+        '$push': {"case": {"case_id": case_id, "case_note": case}},
+    }
+
+    handheld = mongo.db.handheld.find_one_and_update(find, {'$set': update}, return_document=True)
+    return handheld
+
+
+def delete_case_handheld(handheld_id: str, branch: str, case_id: str) -> dict:
+    find = {
+        "_id": ObjectId(handheld_id),
+        "branch": branch.upper(),
+    }
+    update = {
+        '$pop': {"case": {"case_id": case_id}},
+    }
+
+    handheld = mongo.db.handheld.find_one_and_update(find, {'$set': update}, return_document=True)
+    return handheld
 
 
 def change_activate_handheld(data: HandheldChangeActiveDto) -> dict:

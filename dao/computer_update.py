@@ -32,6 +32,7 @@ def create_computer(data: ComputerDto) -> dict:
         "last_status": data.last_status,
         "note": data.note,
         "deactive": data.deactive,
+        "case": [],
         "spec": spec_embed
     }
 
@@ -90,6 +91,32 @@ def update_last_status_computer(computer_id: str, branch: str, last_status: str)
     }
     update = {
         "last_status": last_status,
+    }
+
+    computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
+    return computer
+
+
+def insert_case_computer(computer_id: str, branch: str, case_id: str, case: str) -> dict:
+    find = {
+        "_id": ObjectId(computer_id),
+        "branch": branch.upper(),
+    }
+    update = {
+        '$push': {"case": {"case_id": case_id, "case_note": case}},
+    }
+
+    computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
+    return computer
+
+
+def delete_case_computer(computer_id: str, branch: str, case_id: str) -> dict:
+    find = {
+        "_id": ObjectId(computer_id),
+        "branch": branch.upper(),
+    }
+    update = {
+        '$pop': {"case": {"case_id": case_id}},
     }
 
     computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
