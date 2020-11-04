@@ -106,7 +106,7 @@ def insert_case_computer(computer_id: str, branch: str, case_id: str, case: str)
         '$push': {"case": {"case_id": case_id, "case_note": case}},
     }
 
-    computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
+    computer = mongo.db.computer.find_one_and_update(find, update, return_document=True)
     return computer
 
 
@@ -119,7 +119,7 @@ def delete_case_computer(computer_id: str, branch: str, case_id: str) -> dict:
         '$pop': {"case": {"case_id": case_id}},
     }
 
-    computer = mongo.db.computer.find_one_and_update(find, {'$set': update}, return_document=True)
+    computer = mongo.db.computer.find_one_and_update(find, update, return_document=True)
     return computer
 
 

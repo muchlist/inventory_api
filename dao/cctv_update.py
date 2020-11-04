@@ -108,7 +108,7 @@ def insert_case_cctv(cctv_id: str, branch: str, case_id: str, case: str) -> dict
         '$push': {"case": {"case_id": case_id, "case_note": case}},
     }
 
-    cctv = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
+    cctv = mongo.db.cctv.find_one_and_update(find, update, return_document=True)
     return cctv
 
 
@@ -121,7 +121,7 @@ def delete_case_cctv(cctv_id: str, branch: str, case_id: str) -> dict:
         '$pop': {"case": {"case_id": case_id}},
     }
 
-    cctv = mongo.db.cctv.find_one_and_update(find, {'$set': update}, return_document=True)
+    cctv = mongo.db.cctv.find_one_and_update(find, update, return_document=True)
     return cctv
 
 

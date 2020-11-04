@@ -89,7 +89,7 @@ def insert_case_handheld(handheld_id: str, branch: str, case_id: str, case: str)
         '$push': {"case": {"case_id": case_id, "case_note": case}},
     }
 
-    handheld = mongo.db.handheld.find_one_and_update(find, {'$set': update}, return_document=True)
+    handheld = mongo.db.handheld.find_one_and_update(find, update, return_document=True)
     return handheld
 
 
@@ -102,7 +102,7 @@ def delete_case_handheld(handheld_id: str, branch: str, case_id: str) -> dict:
         '$pop': {"case": {"case_id": case_id}},
     }
 
-    handheld = mongo.db.handheld.find_one_and_update(find, {'$set': update}, return_document=True)
+    handheld = mongo.db.handheld.find_one_and_update(find, update, return_document=True)
     return handheld
 
 
