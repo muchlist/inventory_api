@@ -55,9 +55,9 @@ def update_history(data: EditHistoryDto2) -> dict:
         "updated_by_id": data.updated_by,
     }
 
-    apps_histories = mongo.db.apps_histories.find_one_and_update(find, {'$set': update}, return_document=True)
+    histories = mongo.db.histories.find_one_and_update(find, {'$set': update}, return_document=True)
 
-    return apps_histories
+    return histories
 
 
 def delete_history(history_id: str, branch: str, time_limit: datetime) -> dict:
