@@ -12,9 +12,9 @@ from marshmallow import ValidationError
 from config import config as cf
 from dao import (cctv_query,
                  cctv_update,
-                 history_update)
+                 history2_update)
 from dto.cctv_dto import CctvDto, CctvEditDto, CctvChangeActiveDto
-from dto.history_dto import HistoryDto
+from dto.history2_dto import HistoryDto2
 from input_schemas.cctv import (CctvInsertSchema, CctvEditSchema, CctvAppendStatusSchema, CctvChangeActiveSchema)
 from validations.input_validation import is_ip_address_valid
 from validations.role_validation import is_end_user
@@ -161,17 +161,27 @@ def detail_cctvs(cctv_id):
         if result is None:
             return {"msg": "gagal update komputer, data telah diubah oleh orang lain sebelumnya"}, 400
 
-        history_dto = HistoryDto(result["_id"],
-                                 result["cctv_name"],
-                                 "CCTV",
-                                 claims["name"],
-                                 result["branch"],
-                                 "EDITED",
-                                 "Detail cctv dirubah",
-                                 datetime.now(),
-                                 get_jwt_identity(),
-                                 )
-        history_update.insert_history(history_dto)
+        history2_dto = HistoryDto2(author=claims["name"],
+                                   author_id=get_jwt_identity(),
+                                   branch=claims["branch"],
+                                   category="CCTV",
+                                   location=data["location"],
+                                   status="EDITED",
+                                   date=datetime.now(),
+                                   end_date=datetime.now(),
+                                   note="Detail cctv dirubah",
+                                   duration=0,
+                                   resolve_note="",
+                                   is_complete=True,
+                                   created_at=datetime.now(),
+                                   parent_id=result["_id"],
+                                   parent_name=result["cctv_name"],
+                                   updated_by=claims["name"],
+                                   updated_by_id=get_jwt_identity(),
+                                   timestamp=datetime.now(),
+                                   )
+
+        history2_update.insert_history(ObjectId(), history2_dto)
 
         return jsonify(result), 200
 

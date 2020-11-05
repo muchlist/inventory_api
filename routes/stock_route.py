@@ -11,8 +11,8 @@ from marshmallow import ValidationError
 
 from dao import (stock_update,
                  stock_query,
-                 history_update)
-from dto.history_dto import HistoryDto
+                 history2_update)
+from dto.history2_dto import HistoryDto2
 from dto.stock_dto import (StockDto,
                            StockEditDto,
                            UseStockDto,
@@ -230,17 +230,27 @@ def use_stock(stock_id):
         return {"msg": "Gagal update stock, jumlah stock tidak mencukupi"}, 400
 
     # HISTORY
-    history_dto = HistoryDto(result["_id"],
-                             result["stock_name"],
-                             "STOCK",
-                             claims["name"],
-                             result["branch"],
-                             "CHANGE",
-                             f'Jumlah stok {mode} {data["qty"]} - {data["note"]}',
-                             datetime.now(),
-                             get_jwt_identity(),
-                             )
-    history_update.insert_history(history_dto)
+    history2_dto = HistoryDto2(author=claims["name"],
+                               author_id=get_jwt_identity(),
+                               branch=claims["branch"],
+                               category="STOCK",
+                               location=data["location"],
+                               status="CHANGE",
+                               date=datetime.now(),
+                               end_date=datetime.now(),
+                               note=f'Jumlah stok {mode} {data["qty"]} - {data["note"]}',
+                               duration=0,
+                               resolve_note="",
+                               is_complete=True,
+                               created_at=datetime.now(),
+                               parent_id=result["_id"],
+                               parent_name=result["stock_name"],
+                               updated_by=claims["name"],
+                               updated_by_id=get_jwt_identity(),
+                               timestamp=datetime.now(),
+                               )
+
+    history2_update.insert_history(ObjectId(), history2_dto)
 
     return jsonify(result), 200
 
