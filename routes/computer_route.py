@@ -11,9 +11,9 @@ from marshmallow import ValidationError
 
 from dao import (computer_query,
                  computer_update,
-                 history_update)
+                 history2_update)
 from dto.computer_dto import ComputerDto, SpecDto, ComputerEditDto, ComputerChangeActiveDto
-from dto.history_dto import HistoryDto
+from dto.history2_dto import HistoryDto2
 from input_schemas.computer import (ComputerInsertSchema,
                                     ComputerEditSchema,
                                     ComputerChangeActiveSchema)
@@ -182,17 +182,27 @@ def detail_computers(computer_id):
         if result is None:
             return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
 
-        history_dto = HistoryDto(result["_id"],
-                                 result["client_name"],
-                                 "PC",
-                                 claims["name"],
-                                 result["branch"],
-                                 "EDITED",
-                                 "Detail komputer dirubah",
-                                 datetime.now(),
-                                 get_jwt_identity(),
-                                 )
-        history_update.insert_history(history_dto)
+        history2_dto = HistoryDto2(author=claims["name"],
+                                   author_id=get_jwt_identity(),
+                                   branch=claims["branch"],
+                                   category="PC",
+                                   location=data["location"],
+                                   status="EDITED",
+                                   date=datetime.now(),
+                                   end_date=datetime.now(),
+                                   note="Detail PC dirubah",
+                                   duration=0,
+                                   resolve_note="",
+                                   is_complete=True,
+                                   created_at=datetime.now(),
+                                   parent_id=result["_id"],
+                                   parent_name=result["client_name"],
+                                   updated_by=claims["name"],
+                                   updated_by_id=get_jwt_identity(),
+                                   timestamp=datetime.now(),
+                                   )
+
+        history2_update.insert_history(ObjectId(), history2_dto)
 
         return jsonify(result), 200
 

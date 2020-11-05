@@ -11,9 +11,9 @@ from marshmallow import ValidationError
 
 from dao import (handheld_query,
                  handheld_update,
-                 history_update)
+                 history2_update)
 from dto.handheld_dto import HandheldDto, HandheldEditDto, HandheldChangeActiveDto
-from dto.history_dto import HistoryDto
+from dto.history2_dto import HistoryDto2
 from input_schemas.handheld import (HandheldInsertSchema,
                                     HandheldEditSchema,
                                     HandheldChangeActiveSchema)
@@ -149,17 +149,27 @@ def detail_computers(handheld_id):
         if result is None:
             return {"msg": "Kesalahan pada ID, Cabang, atau sudah ada perubahan sebelumnya"}, 400
 
-        history_dto = HistoryDto(result["_id"],
-                                 result["handheld_name"],
-                                 "HANDHELD",
-                                 claims["name"],
-                                 result["branch"],
-                                 "EDITED",
-                                 "Detail handheld dirubah",
-                                 datetime.now(),
-                                 get_jwt_identity(),
-                                 )
-        history_update.insert_history(history_dto)
+        history2_dto = HistoryDto2(author=claims["name"],
+                                   author_id=get_jwt_identity(),
+                                   branch=claims["branch"],
+                                   category="HANDHELD",
+                                   location=data["location"],
+                                   status="EDITED",
+                                   date=datetime.now(),
+                                   end_date=datetime.now(),
+                                   note="Detail handheld dirubah",
+                                   duration=0,
+                                   resolve_note="",
+                                   is_complete=True,
+                                   created_at=datetime.now(),
+                                   parent_id=result["_id"],
+                                   parent_name=result["handheld_name"],
+                                   updated_by=claims["name"],
+                                   updated_by_id=get_jwt_identity(),
+                                   timestamp=datetime.now(),
+                                   )
+
+        history2_update.insert_history(ObjectId(), history2_dto)
 
         return jsonify(result), 200
 

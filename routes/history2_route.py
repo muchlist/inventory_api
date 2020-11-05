@@ -54,7 +54,7 @@ def insert_history(parent_id):
         if data["date"] is None:
             data["date"] = datetime.now()
 
-        if "end_date" in data:
+        if ("end_date" in data) and (data["end_date"] is not None):
             end_date = data["end_date"]
             time_delta = end_date - data["date"]
             total_second = time_delta.total_seconds()

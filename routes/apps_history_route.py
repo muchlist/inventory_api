@@ -12,9 +12,9 @@ from marshmallow import ValidationError
 from dao import (apps_histo_query,
                  apps_histo_update,
                  apps_update,
-                 history_update)
+                 history2_update)
 from dto.apps_histo_dto import AppsHistoDto, AppsEditHistoDto
-from dto.history_dto import HistoryDto
+from dto.history2_dto import HistoryDto2
 from input_schemas.apps_history import (AppsHistoryInsertSchema, AppsHistoryEditSchema)
 
 bp = Blueprint('apps_history_bp', __name__, url_prefix='/api')
@@ -51,7 +51,7 @@ def apps_history_per_parent(parent_id):
 
         start_date = data["start_date"]
 
-        if "end_date" in data:
+        if ("end_date" in data) and (data["end_date"] is not None):
             end_date = data["end_date"]
             time_delta = end_date - start_date
             total_second = time_delta.total_seconds()
@@ -87,18 +87,26 @@ def apps_history_per_parent(parent_id):
 
         # Menambahkan simple history jika is_complete
         if data["is_complete"]:
-            note = f"prob: {data['desc']}\nsolu: {data['resolve_note']}"
-            history_dto = HistoryDto(history_id,
-                                     parent_apps["apps_name"],
-                                     "APPLICATION",
-                                     claims["name"],
-                                     claims["branch"],
-                                     data["status"],
-                                     note,
-                                     datetime.now(),
-                                     get_jwt_identity(),
-                                     )
-            history_update.insert_history(history_dto)
+            history2_dto = HistoryDto2(author=claims["name"],
+                                       author_id=get_jwt_identity(),
+                                       branch=claims["branch"],
+                                       category="APPLICATION",
+                                       location=data["location"],
+                                       status=data["status"],
+                                       date=start_date,
+                                       end_date=end_date,
+                                       note=data["desc"],
+                                       duration=duration,
+                                       resolve_note=data["resolve_note"],
+                                       is_complete=data["is_complete"],
+                                       created_at=datetime.now(),
+                                       parent_id=str(history_id),
+                                       parent_name=parent_apps["apps_name"],
+                                       updated_by=claims["name"],
+                                       updated_by_id=get_jwt_identity(),
+                                       timestamp=datetime.now(),
+                                       )
+            history2_update.insert_history(ObjectId(), history2_dto)
 
         return {"msg": f"Berhasil menambahkan riwayat aplikasi dengan id {history_id}"}, 201
 
@@ -220,18 +228,26 @@ def detail_apps_history(history_id):
 
         # Menambahkan simple history jika is_complete
         if data["is_complete"]:
-            note = f"prob: {data['desc']}\nsolu: {data['resolve_note']}"
-            history_dto = HistoryDto(history_id,
-                                     history_app["parent_name"],
-                                     "APPLICATION",
-                                     claims["name"],
-                                     claims["branch"],
-                                     data["status"],
-                                     note,
-                                     datetime.now(),
-                                     get_jwt_identity(),
-                                     )
-            history_update.insert_history(history_dto)
+            history2_dto = HistoryDto2(author=claims["name"],
+                                       author_id=get_jwt_identity(),
+                                       branch=claims["branch"],
+                                       category="APPLICATION",
+                                       location=data["location"],
+                                       status=data["status"],
+                                       date=start_date,
+                                       end_date=end_date,
+                                       note=data["desc"],
+                                       duration=duration,
+                                       resolve_note=data["resolve_note"],
+                                       is_complete=data["is_complete"],
+                                       created_at=datetime.now(),
+                                       parent_id=str(history_app["_id"]),
+                                       parent_name=history_app["parent_name"],
+                                       updated_by=claims["name"],
+                                       updated_by_id=get_jwt_identity(),
+                                       timestamp=datetime.now(),
+                                       )
+            history2_update.insert_history(ObjectId(), history2_dto)
 
         return jsonify(history_app), 200
 
