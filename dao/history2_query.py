@@ -12,21 +12,7 @@ def get_history(history_id: str) -> dict:
 
 def find_history_for_parent(parent_id: str) -> list:
     find_filter = {"parent_id": str(parent_id)}
-    projection = {"_id": 1,
-                  "parent_name": 1,
-                  "category": 1,
-                  "author": 1,
-                  "branch": 1,
-                  "note": 1,
-                  "resolve_note": 1,
-                  "duration_minute": 1,
-                  "status": 1,
-                  "start_date": 1,
-                  "is_complete": 1,
-                  "timestamp": 1,
-                  }
-
-    histories_coll = mongo.db.histories.find(find_filter, projection).sort("_id", -1)
+    histories_coll = mongo.db.histories.find(find_filter).sort("_id", -1)
     histories = []
     for history in histories_coll:
         histories.append(history)
