@@ -41,9 +41,11 @@ def find_handheld_by_branch_handheld_name(branch: str,
                   "ip_address": 1,
                   "last_status": 1,
                   "location": 1,
+                  "case": 1,
+                  "case_size": 1,
                   }
 
-    hh_coll = mongo.db.handheld.find(find_filter, projection).sort("location", -1)
+    hh_coll = mongo.db.handheld.find(find_filter, projection).sort([("case_size", -1), ("location", 1), ])
     hhs = []
 
     for hh in hh_coll:

@@ -48,11 +48,13 @@ def find_cctv_by_branch_ip_cctv_name(branch: str,
                   "last_ping": 1,
                   "last_status": 1,
                   "location": 1,
-                  "ping_state": 1
+                  "ping_state": 1,
+                  "case": 1,
+                  "case_size": 1,
                   }
 
     cctv_coll = mongo.db.cctv.find(find_filter, projection).sort(
-        [("last_ping", 1), ("last_status", -1), ("location", -1)])
+        [("case_size", -1), ("last_ping", 1), ("location", -1)])
     cctvs = []
 
     for cctv in cctv_coll:

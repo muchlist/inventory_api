@@ -48,10 +48,12 @@ def find_computer_by_branch_ip_clientname(branch: str,
         "seat_management": 1,
         "last_status": 1,
         "ip_address": 1,
+        "case": 1,
+        "case_size": 1,
     }
 
     computer_coll = mongo.db.computer.find(find_filter, visible_filter).sort(
-        [("location", 1), ("division", 1)])
+        [("case_size", -1), ("location", 1), ("division", 1)])
     computers = []
     for computer in computer_coll:
         computers.append(computer)
