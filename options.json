@@ -145,6 +145,20 @@
     "HILANG",
     "LAINNYA"
   ],
+  "cctv_history": [
+    "MATI",
+    "POE/ADAPTOR",
+    "KONEKSI",
+    "FO-CUT",
+    "BURAM",
+    "TERHALANG",
+    "MAINTENANCE",
+    "PETIR",
+    "LISTRIK",
+    "SOFTWARE",
+    "PINDAH",
+    "LAINNYA"
+  ],
   "app_history": [
     "DOWN",
     "LAMBAT",
