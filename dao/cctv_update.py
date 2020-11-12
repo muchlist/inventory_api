@@ -32,6 +32,7 @@ def create_cctv(data: CctvDto) -> dict:
         "last_ping": "DOWN",
         "image": "",
         "case": [],
+        "case_size": 0,
     }
 
     mongo.db.cctv.insert_one(data_insert)
@@ -106,6 +107,7 @@ def insert_case_cctv(cctv_id: str, branch: str, case_id: str, case: str) -> dict
     }
     update = {
         '$push': {"case": {"case_id": case_id, "case_note": case}},
+        '$inc': {"case_size": 1},
     }
 
     cctv = mongo.db.cctv.find_one_and_update(find, update, return_document=True)
@@ -119,6 +121,7 @@ def delete_case_cctv(cctv_id: str, branch: str, case_id: str) -> dict:
     }
     update = {
         '$pull': {"case": {"case_id": case_id}},
+        '$inc': {"case_size": -1},
     }
 
     cctv = mongo.db.cctv.find_one_and_update(find, update, return_document=True)

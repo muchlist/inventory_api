@@ -33,6 +33,7 @@ def create_computer(data: ComputerDto) -> dict:
         "note": data.note,
         "deactive": data.deactive,
         "case": [],
+        "case_size": 0,
         "spec": spec_embed
     }
 
@@ -104,6 +105,7 @@ def insert_case_computer(computer_id: str, branch: str, case_id: str, case: str)
     }
     update = {
         '$push': {"case": {"case_id": case_id, "case_note": case}},
+        '$inc': {"case_size": 1},
     }
 
     computer = mongo.db.computer.find_one_and_update(find, update, return_document=True)
@@ -117,6 +119,7 @@ def delete_case_computer(computer_id: str, branch: str, case_id: str) -> dict:
     }
     update = {
         '$pull': {"case": {"case_id": case_id}},
+        '$inc': {"case_size": -1},
     }
 
     computer = mongo.db.computer.find_one_and_update(find, update, return_document=True)
