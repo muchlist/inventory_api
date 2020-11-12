@@ -24,7 +24,7 @@ def create_handheld(data: HandheldDto) -> dict:
         "last_status": data.last_status,
         "deactive": data.deactive,
         "case": [],
-        "case_size": 0,
+        "case_size": int(0),
     }
 
     mongo.db.handheld.insert_one(data_insert)

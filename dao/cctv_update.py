@@ -32,7 +32,7 @@ def create_cctv(data: CctvDto) -> dict:
         "last_ping": "DOWN",
         "image": "",
         "case": [],
-        "case_size": 0,
+        "case_size": int(0),
     }
 
     mongo.db.cctv.insert_one(data_insert)

@@ -33,7 +33,7 @@ def create_computer(data: ComputerDto) -> dict:
         "note": data.note,
         "deactive": data.deactive,
         "case": [],
-        "case_size": 0,
+        "case_size": int(0),
         "spec": spec_embed
     }
 
