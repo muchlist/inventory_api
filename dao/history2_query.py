@@ -50,7 +50,7 @@ def find_histories_by_branch_by_category(branch: str, category: str, is_complete
         limit = 100
 
     histories_coll = mongo.db.histories.find(
-        find_filter).sort("_id", -1).limit(limit)
+        find_filter).sort("timestamp", -1).limit(limit)
     histories = []
     for history in histories_coll:
         histories.append(history)
