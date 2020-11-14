@@ -234,7 +234,7 @@ def use_stock(stock_id):
                                author_id=get_jwt_identity(),
                                branch=claims["branch"],
                                category="STOCK",
-                               location=data["location"],
+                               location=result["location"],
                                status="CHANGE",
                                date=datetime.now(),
                                end_date=datetime.now(),

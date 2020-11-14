@@ -130,19 +130,17 @@
     "LAINNYA"
   ],
   "history": [
-    "BAIK",
-    "SEDANG DIPERBAIKI",
-    "BERMASALAH",
-    "RUSAK",
-    "PENGECEKAN",
+    "MATI",
+    "KONEKSI",
+    "LAYAR",
+    "PERIPHERAL",
     "MAINTENANCE",
-    "PINDAH TEMPAT",
+    "SOFTWARE",
+    "PINDAH",
     "GANTI USER",
     "UPGRADE",
     "DOWNGRADE",
-    "DIGUDANGKAN",
-    "DIMUSNAHKAN",
-    "HILANG",
+    "POWER SUPPLY",
     "LAINNYA"
   ],
   "cctv_history": [
