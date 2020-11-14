@@ -1,6 +1,7 @@
 from bson.objectid import ObjectId
 
 from databases.db import mongo
+from bson.son import SON
 
 
 def get_history(history_id: str) -> dict:
@@ -55,3 +56,26 @@ def find_histories_by_branch_by_category(branch: str, category: str, is_complete
         histories.append(history)
 
     return histories
+
+
+def get_histories_in_progress_count(branch: str) -> list:
+    find_filter = {
+        "is_complete": False
+    }
+    if branch:
+        find_filter["branch"] = branch.upper()
+
+    pipeline = [
+        {"$match": find_filter},
+        {"$group": {"_id": "$branch", "count": {"$sum" : 1}}},
+        {"$sort": SON([("count", -1), ("_id", -1)])}
+    ]
+
+    # history_on_progress = mongo.db.histories.find(find_filter).count()
+    cursor = mongo.db.histories.aggregate(pipeline)
+
+    results = []
+    for res in cursor:
+        results.append(res)
+
+    return results

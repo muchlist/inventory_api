@@ -366,3 +366,19 @@ def delete_history(history_id):
                     return {"msg": "Case pada parent tidak terhapus"}, 500
 
         return {"msg": "history berhasil dihapus"}, 204
+
+
+@bp.route("/histories-progress-count", methods=['GET'])
+@jwt_required
+def get_history_progress_count():
+    branch = ""
+    if request.args.get("branch"):
+        branch = request.args.get("branch")
+
+    try:
+        progress_count = history2_query.get_histories_in_progress_count(branch)
+    except:
+        return {"msg": "Gagal memanggil data dari database"}, 500
+
+    # return {"msg": progress_count}, 200
+    return jsonify(progress_count), 200
