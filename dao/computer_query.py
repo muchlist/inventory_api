@@ -3,9 +3,9 @@ from bson.objectid import ObjectId
 from databases.db import mongo
 
 
-def get_computer(id: str) -> dict:
+def get_computer(computer_id: str) -> dict:
     find_filter = {
-        '_id': ObjectId(id),
+        '_id': ObjectId(computer_id),
     }
     return mongo.db.computer.find_one(find_filter)
 

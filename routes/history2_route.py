@@ -13,8 +13,11 @@ from dao import (
     history2_query,
     history2_update,
     computer_update,
+    computer_query,
     cctv_update,
-    handheld_update
+    cctv_query,
+    handheld_update,
+    handheld_query,
 )
 from dto.history2_dto import (
     HistoryDto2, EditHistoryDto2
@@ -63,9 +66,6 @@ def insert_history(parent_id):
             end_date = None
             duration = 0
 
-        if data["is_complete"]:
-            pass
-
         data["branch"] = claims["branch"]
         data["author"] = claims["name"]
 
@@ -75,35 +75,57 @@ def insert_history(parent_id):
         history_id = ObjectId()
 
         parent_name = "UNKNOWN"
-        if data["category"] == "PC":
-            parent = computer_update.insert_case_computer(
-                parent_id,
-                claims["branch"],
-                str(history_id),
-                f'{data["status"]} : {data["note"]}'
-            )
-            if parent is None:
-                return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
-            parent_name = parent["client_name"]
+        if not data["is_complete"]:
+            if data["category"] == "PC":
+                parent = computer_update.insert_case_computer(
+                    parent_id,
+                    claims["branch"],
+                    str(history_id),
+                    f'{data["status"]} : {data["note"]}'
+                )
+                if parent is None:
+                    return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                parent_name = parent["client_name"]
 
-        if data["category"] == "CCTV":
-            parent = cctv_update.insert_case_cctv(parent_id,
-                                                  claims["branch"],
-                                                  str(history_id),
-                                                  f'{data["status"]} : {data["note"]}'
-                                                  )
-            if parent is None:
-                return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
-            parent_name = parent["cctv_name"]
+            if data["category"] == "CCTV":
+                parent = cctv_update.insert_case_cctv(parent_id,
+                                                      claims["branch"],
+                                                      str(history_id),
+                                                      f'{data["status"]} : {data["note"]}'
+                                                      )
+                if parent is None:
+                    return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                parent_name = parent["cctv_name"]
 
-        if data["category"] == "HANDHELD":
-            parent = handheld_update.insert_case_handheld(parent_id,
-                                                          claims["branch"],
-                                                          str(history_id),
-                                                          f'{data["status"]} : {data["note"]}')
-            if parent is None:
-                return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
-            parent_name = parent["handheld_name"]
+            if data["category"] == "HANDHELD":
+                parent = handheld_update.insert_case_handheld(parent_id,
+                                                              claims["branch"],
+                                                              str(history_id),
+                                                              f'{data["status"]} : {data["note"]}')
+                if parent is None:
+                    return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                parent_name = parent["handheld_name"]
+        else:
+
+            """jika tidak IS_COMPLETE maka menemukan parent_name harus di get"""
+
+            if data["category"] == "PC":
+                parent = computer_query.get_computer(parent_id)
+                if parent is None:
+                    return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                parent_name = parent["client_name"]
+
+            if data["category"] == "CCTV":
+                parent = cctv_query.get_cctv(parent_id)
+                if parent is None:
+                    return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                parent_name = parent["cctv_name"]
+
+            if data["category"] == "HANDHELD":
+                parent = handheld_query.get_handheld(parent_id)
+                if parent is None:
+                    return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
+                parent_name = parent["handheld_name"]
 
         if data["category"] == "DAILY":
             parent_name = claims["name"] + " DAILY"
