@@ -380,5 +380,4 @@ def get_history_progress_count():
     except:
         return {"msg": "Gagal memanggil data dari database"}, 500
 
-    # return {"msg": progress_count}, 200
-    return jsonify(progress_count), 200
+    return {"issues": progress_count}, 200
