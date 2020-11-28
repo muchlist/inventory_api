@@ -23,6 +23,7 @@ from dto.history2_dto import (
     HistoryDto2, EditHistoryDto2
 )
 from input_schemas.history2 import HistoryInsertSchema, HistoryEditSchema
+from utils.options import options_json_object
 
 bp = Blueprint('history2_bp', __name__, url_prefix='/api')
 
@@ -403,3 +404,17 @@ def get_history_progress_count():
         return {"msg": "Gagal memanggil data dari database"}, 500
 
     return {"issues": progress_count}, 200
+
+
+@bp.route("/history-dashboard", methods=['GET'])
+@jwt_required
+def get_history_for_dashboard():
+    branch = ""
+    if request.args.get("branch"):
+        branch = request.args.get("branch")
+
+    progress_count = history2_query.get_histories_in_progress_count(branch)
+    histories = history2_query.find_histories_by_branch_by_category(branch, "", 100, 2)
+    option_lvl = options_json_object["version"]
+
+    return {"issues": progress_count, "histories": histories, "option_lvl": option_lvl}, 200
