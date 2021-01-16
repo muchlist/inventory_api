@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import NamedTuple
 
 
-class MasterCheckDto(NamedTuple):
+class CheckObjDto(NamedTuple):
     created_at: datetime
     updated_at: datetime
     name: str
@@ -13,7 +13,7 @@ class MasterCheckDto(NamedTuple):
     note: str
 
 
-class MasterEditCheckDto(NamedTuple):
+class EditCheckObjDto(NamedTuple):
     filter_id: str
     filter_branch: str
 
