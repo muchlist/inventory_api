@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import NamedTuple
+from typing import NamedTuple, List
 
 
 class CheckObjEmbedDto(NamedTuple):
@@ -11,15 +11,26 @@ class CheckObjEmbedDto(NamedTuple):
     is_resolve: bool
     location: str
     type: str
+    image_path: str
 
 
 class CheckObjEmbedEditDto(NamedTuple):
+    filter_parent_id: str
     filter_id: str
+    filter_type: str
 
     is_checked: bool
     checked_at: datetime
     checked_note: str
     is_resolve: bool
+
+
+class CheckObjEmbedInsertPhotoDto(NamedTuple):
+    filter_parent_id: str
+    filter_type: str
+    filter_id: str
+
+    image_path: str
 
 
 class CheckDto(NamedTuple):
@@ -29,11 +40,11 @@ class CheckDto(NamedTuple):
     shift: int
     branch: str
     is_finish: bool
-    checks_obj: []  # CheckObjEmbedDto
-    checks_cctv: []  # CheckObjEmbedDto
+    checks_obj: List[CheckObjEmbedDto]
+    checks_cctv: List[CheckObjEmbedDto]
 
 
-class EditCheckObjDto(NamedTuple):
+class EditCheckDto(NamedTuple):
     filter_id: str
     filter_branch: str
 
