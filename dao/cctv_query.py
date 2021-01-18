@@ -90,6 +90,9 @@ def find_cctv_ip_list(branch: str, location: str) -> list:
 
 
 def find_cctv_must_check(branch: str) -> list:
+
+    first_n = 4
+
     find_filter = {
         "deactive": False,
         "last_ping": "DOWN",
@@ -116,10 +119,10 @@ def find_cctv_must_check(branch: str) -> list:
 
     for cctv in cctv_coll:
 
-        # Inject sum ping state
+        # Inject sum ping state and add if sum ping 0
         sum_ping = 0
         ping_list = cctv["ping_state"]
-        for ping in ping_list:
+        for ping in ping_list[:first_n]:
             sum_ping += ping["code"]
         del cctv["ping_state"]
         cctv["ping_sum"] = int(sum_ping / len(ping_list) * 50)
