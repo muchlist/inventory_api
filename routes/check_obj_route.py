@@ -68,15 +68,15 @@ def find_check():
 
 """
 ------------------------------------------------------------------------------
-Detail Cctv localhost:5001/cctvs/objectID
+Detail check obj localhost:5001/check-obj/objectID
 ------------------------------------------------------------------------------
 """
 
 
 @bp.route("/check-obj/<id>", methods=['GET', 'PUT', 'DELETE'])
 @jwt_required
-def detail_check_obj(id):
-    if not ObjectId.is_valid(id):
+def detail_check_obj(chk_id):
+    if not ObjectId.is_valid(chk_id):
         return {"msg": "Object ID tidak valid"}, 400
 
     claims = get_jwt_claims()
@@ -84,7 +84,7 @@ def detail_check_obj(id):
     if request.method == 'GET':
 
         try:
-            check = check_obj_query.get_check_obj(id)
+            check = check_obj_query.get_check_obj(chk_id)
         except:
             return {"msg": "Gagal mengambil data dari database"}, 500
 
@@ -104,7 +104,7 @@ def detail_check_obj(id):
             return {"msg": "User tidak memiliki hak akses"}, 400
 
         check_obj_edit_dto = EditCheckObjDto(
-            filter_id=id,
+            filter_id=chk_id,
             filter_branch=claims["branch"],
 
             branch=claims["branch"],
@@ -126,7 +126,7 @@ def detail_check_obj(id):
 
         try:
             check_obj = check_obj_update.delete_check_obj(
-                id, claims["branch"], )
+                chk_id, claims["branch"], )
         except:
             return {"msg": "Gagal mengambil data dari database"}, 500
 
