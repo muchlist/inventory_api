@@ -32,7 +32,7 @@ dan Membuat Cctv
 @bp.route("/check", methods=['GET', 'POST'])
 def find_cctv():
     if request.method == 'GET':
-        branch = "BANJARMASIN" #claims["branch"]
+        branch = "BAGENDANG" #claims["branch"]
         if request.args.get("branch"):
             branch = request.args.get("branch")
 
