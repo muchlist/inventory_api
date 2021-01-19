@@ -9,6 +9,7 @@ from routes.apps_history_route import bp as apps_history_bp
 from routes.apps_route import bp as apps_bp
 from routes.cctv_route import bp as cctv_bp
 from routes.check_obj_route import bp as check_bp
+from routes.check_route import bp as checklist_bp
 from routes.computer_route import bp as computer_bp
 from routes.handheld_route import bp as handheld_bp
 from routes.history2_route import bp as history_bp
@@ -55,6 +56,7 @@ app.register_blueprint(handheld_bp)
 app.register_blueprint(option_bp)
 app.register_blueprint(cctv_bp)
 app.register_blueprint(check_bp)
+app.register_blueprint(checklist_bp)
 app.register_blueprint(stock_bp)
 app.register_blueprint(apps_bp)
 app.register_blueprint(apps_history_bp)

@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import NamedTuple, List
+from typing import NamedTuple, Optional, List
 
 
 class CheckObjEmbedDto(NamedTuple):
     id: str
     name: str
     is_checked: bool
-    checked_at: datetime
+    checked_at: Optional[datetime]
     checked_note: str
     is_resolve: bool
     location: str
@@ -40,8 +40,7 @@ class CheckDto(NamedTuple):
     shift: int
     branch: str
     is_finish: bool
-    checks_obj: List[CheckObjEmbedDto]
-    checks_cctv: List[CheckObjEmbedDto]
+    checks_obj: List  # list of dict CheckObjEmbedDto
 
 
 class EditCheckDto(NamedTuple):

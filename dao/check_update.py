@@ -26,7 +26,7 @@ _CHECKS_OBJ__IS_RESOLVE = "checks_obj.$.is_resolve"
 def create_check(data: CheckDto) -> dict:
     data_insert = {
         _CREATED_AT: data.created_at,
-        _CREATED_BY: data.created_at,
+        _CREATED_BY: data.created_by,
         _UPDATED_AT: data.updated_at,
         _SHIFT: data.shift,
         _BRANCH: data.branch.upper(),
