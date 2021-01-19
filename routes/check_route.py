@@ -44,7 +44,7 @@ def find_check():
         check_obj_list = check_obj_query.find_check_obj(claims["branch"], "", "")
         for obj in check_obj_list:
             obj_embed = CheckObjEmbedDto(
-                id=obj["_id"],
+                id=str(obj["_id"]),
                 name=obj["name"],
                 is_checked=False,
                 checked_at=None,
@@ -59,7 +59,7 @@ def find_check():
         check_obj_cctv = cctv_query.find_cctv_must_check(claims["branch"])
         for cctv in check_obj_cctv:
             obj_cctv = CheckObjEmbedDto(
-                id=cctv["_id"],
+                id=str(cctv["_id"]),
                 name=cctv["cctv_name"],
                 is_checked=False,
                 checked_at=None,
