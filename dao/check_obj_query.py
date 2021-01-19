@@ -27,11 +27,11 @@ def find_check_obj(branch: str,
     if branch:
         find_filter[_BRANCH] = branch.upper()
     if name:
-        find_filter[_NAME] = name.upper()
+        find_filter[_NAME] = {'$regex': f'.*{name.upper()}.*'}
     if obj_type:
         find_filter[_TYPE] = obj_type.upper()
 
-    check_coll = mongo.db.check_obj.find(find_filter).sort((_TYPE, -1))
+    check_coll = mongo.db.check_obj.find(find_filter).sort([(_TYPE, -1), (_NAME, 1)])
     checks = []
     for check in check_coll:
         checks.append(check)

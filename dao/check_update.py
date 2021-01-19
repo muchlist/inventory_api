@@ -3,7 +3,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 
 from databases.db import mongo
-from dto.check_dto import CheckDto, EditCheckDto, CheckObjEmbedInsertPhotoDto,CheckObjEmbedEditDto
+from dto.check_dto import CheckDto, EditCheckDto, CheckObjEmbedInsertPhotoDto, CheckObjEmbedEditDto
 
 _ID = "_id"
 _CREATED_AT = "created_at"
