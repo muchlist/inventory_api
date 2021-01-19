@@ -18,7 +18,11 @@ def find_check(branch: str) -> list:
     if branch:
         find_filter[_BRANCH] = branch.upper()
 
-    check_coll = mongo.db.check.find(find_filter).sort(_ID, -1).limit(40)
+    projection = {
+        "checks_obj": 0
+    }
+
+    check_coll = mongo.db.check.find(find_filter, projection).sort(_ID, -1).limit(40)
     checks = []
     for check in check_coll:
         checks.append(check)

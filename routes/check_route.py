@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     jwt_required,
@@ -8,12 +7,9 @@ from flask_jwt_extended import (
 )
 from marshmallow import ValidationError
 
-from dao import (check_obj_update,
-                 check_obj_query, cctv_query, check_update, check_query)
+from dao import (check_obj_query, cctv_query, check_update, check_query)
 from dto.check_dto import CheckDto, CheckObjEmbedDto
-from dto.check_obj_dto import CheckObjDto, EditCheckObjDto
 from input_schemas.check import CheckInsertSchema
-from input_schemas.check_obj import (CheckObjInsertSchema, CheckObjEditSchema)
 from validations.role_validation import is_end_user
 
 bp = Blueprint('checklist_bp', __name__, url_prefix='/api')
@@ -89,6 +85,6 @@ def find_check():
         return jsonify(result), 201
 
     if request.method == 'GET':
-        check = check_query.find_check(branch=claims["branch"],)
+        check = check_query.find_check(branch=claims["branch"], )
 
         return {"check": check}, 200

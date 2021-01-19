@@ -41,7 +41,7 @@ def update_check_obj(data: EditCheckObjDto) -> dict:
         _NAME: data.name.upper(),
         _BRANCH: data.branch.upper(),
         _LOCATION: data.location,
-        _TYPE: data.type,
+        _TYPE: data.type.upper(),
         _NOTE: data.note,
     }
 
