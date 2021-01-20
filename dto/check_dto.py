@@ -46,6 +46,7 @@ class CheckDto(NamedTuple):
 class EditCheckDto(NamedTuple):
     filter_id: str
     filter_branch: str
+    filter_author: str
 
     updated_at: datetime
     shift: int

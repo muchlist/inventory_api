@@ -47,7 +47,6 @@ def update_check(data: EditCheckDto) -> dict:
     update = {
         _UPDATED_AT: data.updated_at,
         _SHIFT: data.shift,
-        _BRANCH: data.branch.upper(),
         _IS_FINISH: data.is_finish,
     }
 
@@ -55,10 +54,27 @@ def update_check(data: EditCheckDto) -> dict:
     return check
 
 
-def delete_check(check_id: str, branch: str) -> dict:
+def finish_check(data: EditCheckDto) -> dict:
+    find = {
+        _ID: ObjectId(data.filter_id),
+        _BRANCH: data.filter_branch,
+        _CREATED_BY: data.filter_author,
+    }
+    update = {
+        _UPDATED_AT: data.updated_at,
+        _IS_FINISH: data.is_finish,
+    }
+
+    check = mongo.db.check.find_one_and_update(find, {'$set': update}, return_document=True)
+    return check
+
+
+
+def delete_check(check_id: str, branch: str,  time_limit: datetime) -> dict:
     find = {
         _ID: ObjectId(check_id),
         _BRANCH: branch,
+        _CREATED_AT: {'$gte': time_limit},
     }
 
     check_obj = mongo.db.check.find_one_and_delete(find)

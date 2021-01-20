@@ -73,7 +73,7 @@ Detail check obj localhost:5001/check-obj/objectID
 """
 
 
-@bp.route("/check-obj/<id>", methods=['GET', 'PUT', 'DELETE'])
+@bp.route("/check-obj/<chk_id>", methods=['GET', 'PUT', 'DELETE'])
 @jwt_required
 def detail_check_obj(chk_id):
     if not ObjectId.is_valid(chk_id):
