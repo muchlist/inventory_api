@@ -8,6 +8,7 @@ class CheckObjEmbedDto(NamedTuple):
     is_checked: bool
     checked_at: Optional[datetime]
     checked_note: str
+    have_problem: bool
     is_resolve: bool
     location: str
     type: str
@@ -17,11 +18,12 @@ class CheckObjEmbedDto(NamedTuple):
 class CheckObjEmbedEditDto(NamedTuple):
     filter_parent_id: str
     filter_id: str
-    filter_type: str
+    filter_author: str
 
     is_checked: bool
     checked_at: datetime
     checked_note: str
+    have_problem: bool
     is_resolve: bool
 
 

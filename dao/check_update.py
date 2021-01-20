@@ -20,6 +20,7 @@ _CHECKS_OBJ__IMAGE_PATH = "checks_obj.$.image_path"
 _CHECKS_OBJ__CHECKED_AT = "checks_obj.$.checked_at"
 _CHECKS_OBJ__IS_CHECKED = "checks_obj.$.is_checked"
 _CHECKS_OBJ__CHECKED_NOTE = "checks_obj.$.checked_note"
+_CHECKS_OBJ__HAVE_PROBLEM = "checks_obj.$.have_problem"
 _CHECKS_OBJ__IS_RESOLVE = "checks_obj.$.is_resolve"
 
 
@@ -99,6 +100,7 @@ def update_child_check_image(data: CheckObjEmbedInsertPhotoDto) -> dict:
 def update_child_check_data(data: CheckObjEmbedEditDto) -> dict:
     find = {
         _ID: ObjectId(data.filter_parent_id),
+        _CREATED_BY: data.filter_author,
         _CHECKS_OBJ__ID: data.filter_id
     }
 
@@ -107,6 +109,7 @@ def update_child_check_data(data: CheckObjEmbedEditDto) -> dict:
         _CHECKS_OBJ__IS_CHECKED: data.is_checked,
         _CHECKS_OBJ__CHECKED_AT: data.checked_at,
         _CHECKS_OBJ__CHECKED_NOTE: data.checked_note,
+        _CHECKS_OBJ__HAVE_PROBLEM: data.have_problem,
         _CHECKS_OBJ__IS_RESOLVE: data.is_resolve
     }
 

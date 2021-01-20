@@ -9,8 +9,8 @@ from flask_jwt_extended import (
 from marshmallow import ValidationError
 
 from dao import (check_obj_query, cctv_query, check_update, check_query)
-from dto.check_dto import CheckDto, CheckObjEmbedDto, EditCheckDto
-from input_schemas.check import CheckInsertSchema, CheckEditSchema
+from dto.check_dto import CheckDto, CheckObjEmbedDto, EditCheckDto, CheckObjEmbedEditDto
+from input_schemas.check import CheckInsertSchema, CheckEditSchema, CheckEmbedChildSchema
 from validations.role_validation import is_end_user
 
 bp = Blueprint('checklist_bp', __name__, url_prefix='/api')
@@ -46,6 +46,7 @@ def find_check():
                 is_checked=False,
                 checked_at=None,
                 checked_note="",
+                have_problem=False,
                 is_resolve=False,
                 location=obj["location"],
                 type=obj["type"],
@@ -61,6 +62,7 @@ def find_check():
                 is_checked=False,
                 checked_at=None,
                 checked_note="",
+                have_problem=True,
                 is_resolve=False,
                 location=cctv["location"],
                 type="CCTV",
@@ -202,3 +204,55 @@ def finish_check(chk_id):
             return {"msg": "Check gagal diselesesaikan"}, 404
 
         return jsonify(check), 200
+
+
+"""
+------------------------------------------------------------------------------
+List check object localhost:5001/check-obj?branch=&name=?
+------------------------------------------------------------------------------
+"""
+
+
+@bp.route("/update-check/<check_id>/<child_id>", methods=['PUT'])
+@jwt_required
+def update_child_check(check_id, child_id):
+    if not (ObjectId.is_valid(check_id) and ObjectId.is_valid(child_id)):
+        return {"msg": "Object ID tidak valid"}, 400
+
+    claims = get_jwt_claims()
+
+    if request.method == 'PUT':
+        schema = CheckEmbedChildSchema()
+        try:
+            data = schema.load(request.get_json())
+        except ValidationError as err:
+            return {"msg": str(err.messages)}, 400
+
+        if not is_end_user(claims):
+            return {"msg": "User tidak memiliki hak akses"}, 400
+
+        is_checked = data["is_checked"]  # bool
+        checked_note = data["checked_note"]  # str
+        have_problem = data["have_problem"]  # bool
+        is_resolve = data["is_resolve"]  # bool
+
+        child_dto = CheckObjEmbedEditDto(
+            filter_parent_id=check_id,
+            filter_id=child_id,
+            filter_author=claims["name"],
+            checked_at=datetime.now(),
+            is_checked=is_checked,
+            have_problem=have_problem,
+            is_resolve=is_resolve,
+            checked_note=checked_note,
+        )
+
+        try:
+            result = check_update.update_child_check_data(child_dto)
+        except:
+            return {"msg": "Gagal menyimpan data ke database"}, 500
+
+        if result is None:
+            return {"msg": "gagal merubah data, cek kesesuaian id, cabang dan user"}, 400
+
+        return jsonify(result), 201
