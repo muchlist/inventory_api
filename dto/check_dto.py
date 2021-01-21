@@ -29,8 +29,8 @@ class CheckObjEmbedEditDto(NamedTuple):
 
 class CheckObjEmbedInsertPhotoDto(NamedTuple):
     filter_parent_id: str
-    filter_type: str
     filter_id: str
+    filter_author: str
 
     image_path: str
 

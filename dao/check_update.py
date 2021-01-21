@@ -85,7 +85,8 @@ def delete_check(check_id: str, branch: str,  time_limit: datetime) -> dict:
 def update_child_check_image(data: CheckObjEmbedInsertPhotoDto) -> dict:
     find = {
         _ID: ObjectId(data.filter_parent_id),
-        _CHECKS_OBJ__ID: data.filter_id
+        _CHECKS_OBJ__ID: data.filter_id,
+        _CREATED_BY: data.filter_author,
     }
 
     update = {
