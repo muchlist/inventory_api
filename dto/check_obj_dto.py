@@ -23,3 +23,11 @@ class EditCheckObjDto(NamedTuple):
     location: str
     type: str
     note: str
+
+
+class EditCheckObjBySystemDto(NamedTuple):
+    filter_id: str
+    updated_at: datetime
+    checked_note: str
+    have_problem: bool
+    is_resolve: bool

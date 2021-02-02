@@ -70,8 +70,7 @@ def finish_check(data: EditCheckDto) -> dict:
     return check
 
 
-
-def delete_check(check_id: str, branch: str,  time_limit: datetime) -> dict:
+def delete_check(check_id: str, branch: str, time_limit: datetime) -> dict:
     find = {
         _ID: ObjectId(check_id),
         _BRANCH: branch,

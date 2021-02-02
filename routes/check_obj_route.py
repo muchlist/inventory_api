@@ -59,9 +59,15 @@ def find_check():
     if request.method == 'GET':
         name = request.args.get("name")
         obj_type = request.args.get("obj_type")
+        problem = request.args.get("problem")
+        if problem:
+            if problem != "":
+                problem = 1
+
         check_obj = check_obj_query.find_check_obj(branch=claims["branch"],
                                                    name=name,
-                                                   obj_type=obj_type)
+                                                   obj_type=obj_type,
+                                                   problem=problem)
 
         return {"check-obj": check_obj}, 200
 

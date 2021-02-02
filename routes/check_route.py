@@ -8,8 +8,9 @@ from flask_jwt_extended import (
 )
 from marshmallow import ValidationError
 
-from dao import (check_obj_query, cctv_query, check_update, check_query)
+from dao import (check_obj_query, check_obj_update, cctv_query, check_update, check_query)
 from dto.check_dto import CheckDto, CheckObjEmbedDto, EditCheckDto, CheckObjEmbedEditDto
+from dto.check_obj_dto import EditCheckObjBySystemDto
 from input_schemas.check import CheckInsertSchema, CheckEditSchema, CheckEmbedChildSchema
 from validations.role_validation import is_end_user
 
@@ -38,16 +39,21 @@ def find_check():
             return {"msg": "User tidak memiliki hak akses"}, 400
 
         obj_embed_list = []
-        check_obj_list = check_obj_query.find_check_obj(claims["branch"], "", "")
+        check_obj_list = check_obj_query.find_check_obj(
+            branch=claims["branch"],
+            name="",
+            obj_type="",
+            problem=0
+        )
         for obj in check_obj_list:
             obj_embed = CheckObjEmbedDto(
                 id=str(obj["_id"]),
                 name=obj["name"],
                 is_checked=False,
                 checked_at=None,
-                checked_note="",
-                have_problem=False,
-                is_resolve=False,
+                checked_note=obj["checked_note"],
+                have_problem=obj["have_problem"],
+                is_resolve=obj["is_resolve"],
                 location=obj["location"],
                 type=obj["type"],
                 image_path="",
@@ -116,7 +122,7 @@ def detail_check(chk_id):
             return {"msg": "Gagal mengambil data dari database"}, 500
 
         if check is None:
-            return {"msg": "Cctv dengan ID tersebut tidak ditemukan"}, 404
+            return {"msg": "Check ID tidak ditemukan"}, 404
 
         return jsonify(check), 200
 
@@ -254,5 +260,26 @@ def update_child_check(check_id, child_id):
 
         if result is None:
             return {"msg": "gagal merubah data, cek kesesuaian id, cabang dan user"}, 400
+        else:
+            # check is child id existing in database check obj
+            # if type is cctv it is not exist
+            if check_type_of_child_is_not_cctv(child_id, result["checks_obj"]):
+                check_obj_update.update_check_obj_by_system(
+                    EditCheckObjBySystemDto(
+                        filter_id=child_id,
+                        updated_at=datetime.now(),
+                        checked_note=checked_note,
+                        have_problem=have_problem,
+                        is_resolve=is_resolve
+                    )
+                )
 
         return jsonify(result), 201
+
+
+def check_type_of_child_is_not_cctv(child_id: str, data: list):
+    for x in data:
+        if x["id"] == child_id:
+            if x["type"] == "CCTV":
+                return False
+    return True

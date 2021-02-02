@@ -9,8 +9,11 @@ _NAME = "name"
 _BRANCH = "branch"
 _LOCATION = "location"
 _TYPE = "type"
-_LAST_STATUS = "last_status"
 _NOTE = "note"
+
+_CHECKED_NOTE = "checked_note"
+_HAVE_PROBLEM = "have_problem"
+_IS_RESOLVE = "is_resolve"
 
 
 def get_check_obj(check_id: str) -> dict:
@@ -22,7 +25,8 @@ def get_check_obj(check_id: str) -> dict:
 
 def find_check_obj(branch: str,
                    name: str,
-                   obj_type: str, ) -> list:
+                   obj_type: str,
+                   problem: int, ) -> list:
     find_filter = {}
     if branch:
         find_filter[_BRANCH] = branch.upper()
@@ -30,6 +34,8 @@ def find_check_obj(branch: str,
         find_filter[_NAME] = {'$regex': f'.*{name.upper()}.*'}
     if obj_type and obj_type != "":
         find_filter[_TYPE] = obj_type.upper()
+    if problem == 1:
+        find_filter[_HAVE_PROBLEM] = problem
 
     check_coll = mongo.db.check_obj.find(find_filter).sort([(_TYPE, -1), (_NAME, 1)])
     checks = []

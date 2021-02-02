@@ -1,7 +1,7 @@
 from bson.objectid import ObjectId
 
 from databases.db import mongo
-from dto.check_obj_dto import CheckObjDto, EditCheckObjDto
+from dto.check_obj_dto import CheckObjDto, EditCheckObjDto, EditCheckObjBySystemDto
 
 _ID = "_id"
 _CREATED_AT = "created_at"
@@ -10,8 +10,11 @@ _NAME = "name"
 _BRANCH = "branch"
 _LOCATION = "location"
 _TYPE = "type"
-_LAST_STATUS = "last_status"
 _NOTE = "note"
+
+_CHECKED_NOTE = "checked_note"
+_HAVE_PROBLEM = "have_problem"
+_IS_RESOLVE = "is_resolve"
 
 
 def create_check_obj(data: CheckObjDto) -> dict:
@@ -22,8 +25,10 @@ def create_check_obj(data: CheckObjDto) -> dict:
         _BRANCH: data.branch.upper(),
         _LOCATION: data.location,
         _TYPE: data.type,
-        _LAST_STATUS: data.last_status,
         _NOTE: data.note,
+        _HAVE_PROBLEM: False,
+        _IS_RESOLVE: False,
+        _CHECKED_NOTE: "",
     }
 
     mongo.db.check_obj.insert_one(data_insert)
@@ -43,6 +48,21 @@ def update_check_obj(data: EditCheckObjDto) -> dict:
         _LOCATION: data.location,
         _TYPE: data.type.upper(),
         _NOTE: data.note,
+    }
+
+    check_obj = mongo.db.check_obj.find_one_and_update(find, {'$set': update}, return_document=True)
+    return check_obj
+
+
+def update_check_obj_by_system(data: EditCheckObjBySystemDto) -> dict:
+    find = {
+        _ID: ObjectId(data.filter_id),
+    }
+    update = {
+        _UPDATED_AT: data.updated_at,
+        _HAVE_PROBLEM: data.have_problem,
+        _IS_RESOLVE: data.is_resolve,
+        _CHECKED_NOTE: data.checked_note,
     }
 
     check_obj = mongo.db.check_obj.find_one_and_update(find, {'$set': update}, return_document=True)
