@@ -87,3 +87,46 @@ def find_cctv_ip_list(branch: str, location: str) -> list:
         cctv_ip_address_list.append(cctv["ip_address"])
 
     return cctv_ip_address_list
+
+
+def find_cctv_must_check(branch: str) -> list:
+
+    first_n = 4
+
+    find_filter = {
+        "deactive": False,
+        "last_ping": "DOWN",
+        "case_size": int(0)
+    }
+    if branch:
+        find_filter["branch"] = branch.upper()
+
+    projection = {"_id": 1,
+                  "branch": 1,
+                  "cctv_name": 1,
+                  "ip_address": 1,
+                  "last_ping": 1,
+                  "last_status": 1,
+                  "location": 1,
+                  "ping_state": 1,
+                  "case": 1,
+                  "case_size": 1,
+                  }
+
+    cctv_coll = mongo.db.cctv.find(find_filter, projection).sort("cctv_name", 1)
+
+    cctv_list = []
+
+    for cctv in cctv_coll:
+
+        # Inject sum ping state and add if sum ping 0
+        sum_ping = 0
+        ping_list = cctv["ping_state"]
+        for ping in ping_list[:first_n]:
+            sum_ping += ping["code"]
+        del cctv["ping_state"]
+        cctv["ping_sum"] = int(sum_ping / len(ping_list) * 50)
+        if cctv["ping_sum"] == 0:
+            cctv_list.append(cctv)
+
+    return cctv_list

@@ -133,5 +133,3 @@ dmypy.json
 
 /venv
 config.json
-static/images/cctv/
-static/images/stock/

@@ -3,6 +3,7 @@ bcrypt==3.2.0
 cffi==1.14.4
 click==7.1.2
 colorama==0.4.4
+dnspython==2.1.0
 Flask==1.1.1
 Flask-Bcrypt==0.7.1
 Flask-JWT-Extended==3.24.1
@@ -27,5 +28,5 @@ python-dotenv==0.10.3
 reportlab==3.5.59
 six==1.15.0
 toml==0.10.2
-Werkzeug==1.0.1
+Werkzeug==0.16.0
 wrapt==1.12.1
