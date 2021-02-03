@@ -38,6 +38,8 @@ def find_check():
         if not is_end_user(claims):
             return {"msg": "User tidak memiliki hak akses"}, 400
 
+        shift = data["shift"]
+
         obj_embed_list = []
         check_obj_list = check_obj_query.find_check_obj(
             branch=claims["branch"],
@@ -46,19 +48,23 @@ def find_check():
             problem=0
         )
         for obj in check_obj_list:
-            obj_embed = CheckObjEmbedDto(
-                id=str(obj["_id"]),
-                name=obj["name"],
-                is_checked=False,
-                checked_at=None,
-                checked_note=obj["checked_note"],
-                have_problem=obj["have_problem"],
-                is_resolve=obj["is_resolve"],
-                location=obj["location"],
-                type=obj["type"],
-                image_path="",
-            )._asdict()
-            obj_embed_list.append(obj_embed)
+            # jika obj memiliki shift yang sama dengan shift request
+            # atau obj memiliki problem. maka masukkan ke dalam daftar check
+            shift_match = shift in obj["shifts"]
+            if obj["have_problem"] or shift_match:
+                obj_embed = CheckObjEmbedDto(
+                    id=str(obj["_id"]),
+                    name=obj["name"],
+                    is_checked=False,
+                    checked_at=None,
+                    checked_note=obj["checked_note"],
+                    have_problem=obj["have_problem"],
+                    is_resolve=obj["is_resolve"],
+                    location=obj["location"],
+                    type=obj["type"],
+                    image_path="",
+                )._asdict()
+                obj_embed_list.append(obj_embed)
 
         check_obj_cctv = cctv_query.find_cctv_must_check(claims["branch"])
         for cctv in check_obj_cctv:
@@ -82,7 +88,7 @@ def find_check():
             created_by=claims["name"],
             branch=claims["branch"],
             is_finish=False,
-            shift=data["shift"],
+            shift=shift,
             checks_obj=obj_embed_list
         )
 

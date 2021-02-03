@@ -10,6 +10,7 @@ class CheckObjDto(NamedTuple):
     location: str
     type: str
     last_status: str
+    shifts: list[int]
     note: str
 
 
@@ -22,6 +23,7 @@ class EditCheckObjDto(NamedTuple):
     branch: str
     location: str
     type: str
+    shifts: list[int]
     note: str
 
 

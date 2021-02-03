@@ -11,6 +11,7 @@ _BRANCH = "branch"
 _LOCATION = "location"
 _TYPE = "type"
 _NOTE = "note"
+_SHIFTS = "shifts"
 
 _CHECKED_NOTE = "checked_note"
 _HAVE_PROBLEM = "have_problem"
@@ -26,6 +27,7 @@ def create_check_obj(data: CheckObjDto) -> dict:
         _LOCATION: data.location,
         _TYPE: data.type,
         _NOTE: data.note,
+        _SHIFTS: data.shifts,
         _HAVE_PROBLEM: False,
         _IS_RESOLVE: False,
         _CHECKED_NOTE: "",
