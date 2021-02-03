@@ -220,7 +220,7 @@ def finish_check(chk_id):
 
 """
 ------------------------------------------------------------------------------
-List check object localhost:5001/check-obj?branch=&name=?
+Update check child localhost:5001/update-check/<check_id>/<child_id>
 ------------------------------------------------------------------------------
 """
 
