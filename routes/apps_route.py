@@ -64,6 +64,7 @@ def find_apps():
 
         apps = apps_query.find_apps_and_filter(
             apps_name=apps_name,
+            branch=claims["branch"],
         )
 
         return {"apps": apps}, 200

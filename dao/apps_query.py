@@ -10,10 +10,12 @@ def get_apps(apps_id: str) -> dict:
     return mongo.db.apps.find_one(find_filter)
 
 
-def find_apps_and_filter(apps_name: str) -> list:
+def find_apps_and_filter(apps_name: str, branch: str) -> list:
     find_filter = {}
     if apps_name:
         find_filter["apps_name"] = {'$regex': f'.*{apps_name.upper()}.*'}
+    if branch:
+        find_filter["branches"] = branch.upper()
 
     projection = {
         "_id": 1,
