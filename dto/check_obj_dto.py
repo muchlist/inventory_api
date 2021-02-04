@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import NamedTuple
+from typing import List
 
 
 class CheckObjDto(NamedTuple):
@@ -10,7 +11,7 @@ class CheckObjDto(NamedTuple):
     location: str
     type: str
     last_status: str
-    shifts: list[int]
+    shifts: List[int]
     note: str
 
 
@@ -23,7 +24,7 @@ class EditCheckObjDto(NamedTuple):
     branch: str
     location: str
     type: str
-    shifts: list[int]
+    shifts: List[int]
     note: str
 
 
