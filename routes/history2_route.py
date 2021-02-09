@@ -76,8 +76,8 @@ def insert_history(parent_id):
         history_id = ObjectId()
 
         parent_name = "UNKNOWN"
-        if data["complete_status"] == 0:
-            # Jika historynya !complete / (complete_status == 0) masukkan kedalam case
+        if data["complete_status"] < 2:
+            # Jika historynya !complete / (complete_status == 0) / (complete_status == 1) masukkan kedalam case
             if data["category"] == "PC":
                 parent = computer_update.insert_case_computer(
                     parent_id,
@@ -109,7 +109,7 @@ def insert_history(parent_id):
                 parent_name = parent["handheld_name"]
         else:
 
-            """jika tidak complete_status == 0 maka tidak perlu menambahkan case
+            """jika tidak complete_status = 2 maka tidak perlu menambahkan case
                sehingga menemukan parent_name harus di get"""
 
             if data["category"] == "PC":
@@ -318,7 +318,7 @@ def delete_history(history_id):
             return {"msg": "Gagal memperbarui riwayat, kesalahan pada cabang atau timestamp"}, 400
 
         # Jika history complete_status belum 2 (komplete) maka berarti harus dihapus di parrentnya
-        if history["complete_status"] != 2:
+        if history["complete_status"] < 2:
             if history["category"] == "PC":
                 parent = computer_update.delete_case_computer(
                     history["parent_id"],
@@ -362,7 +362,7 @@ def delete_history(history_id):
             return {"msg": "Gagal menghapus riwayat, batas waktu 24 jam telah tercapai !"}, 400
 
         # Jika history belum komplete, berarti harus dihapus di parrentnya karena masih nyantol
-        if history["complete_status"] != 2:
+        if history["complete_status"] < 2:
             if history["category"] == "PC":
                 parent = computer_update.delete_case_computer(
                     history["parent_id"],
@@ -417,7 +417,7 @@ def get_history_for_dashboard():
         branch = request.args.get("branch")
 
     progress_count = history2_query.get_histories_in_progress_count(branch)
-    histories = history2_query.find_histories_by_branch_by_category(branch, "", 100, 2)
+    histories = history2_query.find_histories_by_branch_by_category(branch, "", 100, 3)
     option_lvl = options_json_object["version"]
 
     return {"issues": progress_count, "histories": histories, "option_lvl": option_lvl}, 200

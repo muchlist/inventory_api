@@ -16,7 +16,7 @@ from utils.my_bcrypt import bcrypt
 
 bp = Blueprint('user_bp', __name__)
 
-EXPIRED_TOKEN = 15
+EXPIRED_TOKEN = 60
 
 """
 ------------------------------------------------------------------------------
