@@ -241,7 +241,7 @@ def use_stock(stock_id):
                                note=f'Jumlah stok {mode} {data["qty"]} - {data["note"]}',
                                duration=0,
                                resolve_note="",
-                               is_complete=True,
+                               complete_status=2,
                                created_at=datetime.now(),
                                parent_id=result["_id"],
                                parent_name=result["stock_name"],

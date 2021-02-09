@@ -9,7 +9,8 @@ class CheckObjEmbedDto(NamedTuple):
     checked_at: Optional[datetime]
     checked_note: str
     have_problem: bool
-    is_resolve: bool
+    # is_resolve: bool
+    complete_status: int  # 0 progress, 1 pending, 2 complete
     location: str
     type: str
     image_path: str
@@ -24,7 +25,8 @@ class CheckObjEmbedEditDto(NamedTuple):
     checked_at: datetime
     checked_note: str
     have_problem: bool
-    is_resolve: bool
+    # is_resolve: bool
+    complete_status: int  # 0 progress, 1 pending, 2 complete
 
 
 class CheckObjEmbedInsertPhotoDto(NamedTuple):

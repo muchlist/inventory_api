@@ -59,7 +59,7 @@ def find_check():
                     checked_at=None,
                     checked_note=obj["checked_note"],
                     have_problem=obj["have_problem"],
-                    is_resolve=obj["is_resolve"],
+                    complete_status=obj["complete_status"],
                     location=obj["location"],
                     type=obj["type"],
                     image_path="",
@@ -75,7 +75,7 @@ def find_check():
                 checked_at=None,
                 checked_note="",
                 have_problem=True,
-                is_resolve=False,
+                complete_status=0,
                 location=cctv["location"],
                 type="CCTV",
                 image_path="",
@@ -246,7 +246,7 @@ def update_child_check(check_id, child_id):
         is_checked = data["is_checked"]  # bool
         checked_note = data["checked_note"]  # str
         have_problem = data["have_problem"]  # bool
-        is_resolve = data["is_resolve"]  # bool
+        complete_status = data["complete_status"]  # int
 
         child_dto = CheckObjEmbedEditDto(
             filter_parent_id=check_id,
@@ -255,7 +255,7 @@ def update_child_check(check_id, child_id):
             checked_at=datetime.now(),
             is_checked=is_checked,
             have_problem=have_problem,
-            is_resolve=is_resolve,
+            complete_status=complete_status,
             checked_note=checked_note,
         )
 
@@ -276,9 +276,11 @@ def update_child_check(check_id, child_id):
                         updated_at=datetime.now(),
                         checked_note=checked_note,
                         have_problem=have_problem,
-                        is_resolve=is_resolve
+                        complete_status=complete_status
                     )
                 )
+            else:  # is cctv
+                pass  # todo cctv must be crazy
 
         return jsonify(result), 201
 

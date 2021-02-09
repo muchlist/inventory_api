@@ -76,7 +76,8 @@ def insert_history(parent_id):
         history_id = ObjectId()
 
         parent_name = "UNKNOWN"
-        if not data["is_complete"]:
+        if data["complete_status"] == 0:
+            # Jika historynya !complete / (complete_status == 0) masukkan kedalam case
             if data["category"] == "PC":
                 parent = computer_update.insert_case_computer(
                     parent_id,
@@ -108,7 +109,8 @@ def insert_history(parent_id):
                 parent_name = parent["handheld_name"]
         else:
 
-            """jika tidak IS_COMPLETE maka menemukan parent_name harus di get"""
+            """jika tidak complete_status == 0 maka tidak perlu menambahkan case
+               sehingga menemukan parent_name harus di get"""
 
             if data["category"] == "PC":
                 parent = computer_query.get_computer(parent_id)
@@ -147,7 +149,7 @@ def insert_history(parent_id):
             parent_name=parent_name,
             duration=duration,
             resolve_note=data["resolve_note"],
-            is_complete=data["is_complete"],
+            complete_status=data["complete_status"],
             category=data["category"],
             updated_by=claims["name"],
             updated_by_id=get_jwt_identity(),
@@ -185,7 +187,7 @@ api.com/histories?category=PC&branch=BAGENDANG
 def get_history():
     category = request.args.get("category")
     limit = request.args.get("limit")
-    is_complete = request.args.get("is_complete")
+    complete_status = request.args.get("complete_status")
 
     if limit:
         try:
@@ -193,13 +195,11 @@ def get_history():
         except ValueError:
             return {"msg": "limit harus berupa angka"}, 400
 
-    if is_complete:
+    if complete_status:
         try:
-            is_complete = int(is_complete)
+            limit = int(limit)
         except ValueError:
-            return {"msg": "is_complete harus berupa angka"}, 400
-    else:
-        is_complete = 100  # selain 0 dan 1 berarti semuanya
+            return {"msg": "limit harus berupa angka"}, 400
 
     """
         Jika cabang luar kalimantan di includekan ke aplikasi maka filter by branch harus dijadikan
@@ -212,7 +212,10 @@ def get_history():
 
     # histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
     try:
-        histories = history2_query.find_histories_by_branch_by_category(branch, category, is_complete, limit)
+        histories = history2_query.find_histories_by_branch_by_category(branch=branch,
+                                                                        category=category,
+                                                                        complete_status=complete_status,
+                                                                        limit=limit)
     except:
         return {"msg": "Gagal memanggil data dari database"}, 500
 
@@ -301,7 +304,7 @@ def delete_history(history_id):
             note=data["note"],
             duration=duration,
             resolve_note=data["resolve_note"],
-            is_complete=data["is_complete"],
+            complete_status=data["complete_status"],
             updated_by=claims["name"],
             updated_by_id=get_jwt_identity(),
         )
@@ -314,8 +317,8 @@ def delete_history(history_id):
         if history is None:
             return {"msg": "Gagal memperbarui riwayat, kesalahan pada cabang atau timestamp"}, 400
 
-        # Jika history komplete, berarti harus dihapus di parrentnya karena masih nyantol
-        if history["is_complete"]:
+        # Jika history complete_status belum 2 (komplete) maka berarti harus dihapus di parrentnya
+        if history["complete_status"] != 2:
             if history["category"] == "PC":
                 parent = computer_update.delete_case_computer(
                     history["parent_id"],
@@ -359,7 +362,7 @@ def delete_history(history_id):
             return {"msg": "Gagal menghapus riwayat, batas waktu 24 jam telah tercapai !"}, 400
 
         # Jika history belum komplete, berarti harus dihapus di parrentnya karena masih nyantol
-        if not history["is_complete"]:
+        if history["complete_status"] != 2:
             if history["category"] == "PC":
                 parent = computer_update.delete_case_computer(
                     history["parent_id"],

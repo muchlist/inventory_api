@@ -19,7 +19,8 @@ class HistoryDto2(NamedTuple):
     location: str
     duration: int
     resolve_note: str
-    is_complete: bool
+    # is_complete: bool
+    complete_status: int # 0 progress, 1 pending, 2 complete
     updated_by: str
     updated_by_id: str
 
@@ -36,6 +37,7 @@ class EditHistoryDto2(NamedTuple):
     duration: int
     note: str
     resolve_note: str
-    is_complete: bool
+    # is_complete: bool
+    complete_status: int  # 0 progress, 1 pending, 2 complete
     updated_by: str
     updated_by_id: str

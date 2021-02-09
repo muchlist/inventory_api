@@ -33,4 +33,5 @@ class EditCheckObjBySystemDto(NamedTuple):
     updated_at: datetime
     checked_note: str
     have_problem: bool
-    is_resolve: bool
+    # is_resolve: bool
+    complete_status: int

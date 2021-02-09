@@ -91,7 +91,15 @@ def put_delete_user(username):
         if not user_eksis(username):
             return {"msg": f"user {username} tidak ditemukan"}, 400
 
-        user_dto = UserDto(username, "", data["email"], data["isAdmin"], data["isEndUser"], data["branch"])
+        user_dto = UserDto(
+            username,
+            "",
+            data["name"],
+            data["email"],
+            data["isAdmin"],
+            data["isEndUser"],
+            data["branch"]
+        )
 
         try:
             user_update.update_user(user_dto)

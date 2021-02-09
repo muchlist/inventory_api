@@ -193,7 +193,7 @@ def detail_computers(computer_id):
                                    note="Detail PC dirubah",
                                    duration=0,
                                    resolve_note="",
-                                   is_complete=True,
+                                   complete_status=2,
                                    created_at=datetime.now(),
                                    parent_id=result["_id"],
                                    parent_name=result["client_name"],
