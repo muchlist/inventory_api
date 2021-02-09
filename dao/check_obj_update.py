@@ -17,6 +17,8 @@ _CHECKED_NOTE = "checked_note"
 _HAVE_PROBLEM = "have_problem"
 # _IS_RESOLVE = "is_resolve"
 _COMPLETE_STATUS = "complete_status"
+_TAG_ONE = "tag_one"
+_TAG_TWO = "tag_two"
 
 
 def create_check_obj(data: CheckObjDto) -> dict:
@@ -32,6 +34,8 @@ def create_check_obj(data: CheckObjDto) -> dict:
         _HAVE_PROBLEM: False,
         _COMPLETE_STATUS: 0,
         _CHECKED_NOTE: "",
+        _TAG_ONE: data.tag_one,
+        _TAG_TWO: data.tag_two
     }
 
     mongo.db.check_obj.insert_one(data_insert)
@@ -51,6 +55,8 @@ def update_check_obj(data: EditCheckObjDto) -> dict:
         _LOCATION: data.location,
         _TYPE: data.type.upper(),
         _NOTE: data.note,
+        _TAG_ONE: data.tag_one,
+        _TAG_TWO: data.tag_two
     }
 
     check_obj = mongo.db.check_obj.find_one_and_update(find, {'$set': update}, return_document=True)

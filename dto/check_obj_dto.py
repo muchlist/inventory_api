@@ -13,6 +13,8 @@ class CheckObjDto(NamedTuple):
     last_status: str
     shifts: List[int]
     note: str
+    tag_one: List[str]
+    tag_two: List[str]
 
 
 class EditCheckObjDto(NamedTuple):
@@ -26,6 +28,8 @@ class EditCheckObjDto(NamedTuple):
     type: str
     shifts: List[int]
     note: str
+    tag_one: List[str]
+    tag_two: List[str]
 
 
 class EditCheckObjBySystemDto(NamedTuple):

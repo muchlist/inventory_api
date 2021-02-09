@@ -14,6 +14,10 @@ class CheckObjEmbedDto(NamedTuple):
     location: str
     type: str
     image_path: str
+    tag_one: List[str]
+    tag_two: List[str]
+    tag_one_selected: str
+    tag_two_selected: str
 
 
 class CheckObjEmbedEditDto(NamedTuple):
@@ -27,6 +31,8 @@ class CheckObjEmbedEditDto(NamedTuple):
     have_problem: bool
     # is_resolve: bool
     complete_status: int  # 0 progress, 1 pending, 2 complete
+    tag_one_selected: str
+    tag_two_selected: str
 
 
 class CheckObjEmbedInsertPhotoDto(NamedTuple):

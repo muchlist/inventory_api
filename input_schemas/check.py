@@ -17,3 +17,5 @@ class CheckEmbedChildSchema(Schema):
     # is_resolve = fields.Bool(required=True)
     complete_status = fields.Int(required=True)
     have_problem = fields.Bool(required=True)
+    tag_one_selected = fields.Str(required=True)
+    tag_two_selected = fields.Str(required=True)
