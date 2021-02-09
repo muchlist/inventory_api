@@ -197,9 +197,9 @@ def get_history():
 
     if complete_status:
         try:
-            limit = int(limit)
+            complete_status = int(complete_status)
         except ValueError:
-            return {"msg": "limit harus berupa angka"}, 400
+            return {"msg": "complete_status harus berupa angka"}, 400
 
     """
         Jika cabang luar kalimantan di includekan ke aplikasi maka filter by branch harus dijadikan
@@ -417,7 +417,7 @@ def get_history_for_dashboard():
         branch = request.args.get("branch")
 
     progress_count = history2_query.get_histories_in_progress_count(branch)
-    histories = history2_query.find_histories_by_branch_by_category(branch, "", 100, 3)
+    histories = history2_query.find_histories_by_branch_by_category(branch, "", -1, 3)
     option_lvl = options_json_object["version"]
 
     return {"issues": progress_count, "histories": histories, "option_lvl": option_lvl}, 200

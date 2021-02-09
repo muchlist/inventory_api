@@ -34,7 +34,10 @@ def find_history_for_user(author_id: str, limit: int) -> list:
     return histories
 
 
-def find_histories_by_branch_by_category(branch: str, category: str, complete_status: int, limit: int) -> list:
+def find_histories_by_branch_by_category(branch: str,
+                                         category: str,
+                                         complete_status: int,
+                                         limit: int) -> list:
     find_filter = {}
     if branch:
         find_filter["branch"] = branch.upper()
@@ -42,7 +45,10 @@ def find_histories_by_branch_by_category(branch: str, category: str, complete_st
         find_filter["category"] = category.upper()
 
     if complete_status:
-        find_filter["complete_status"] = complete_status
+        if complete_status < 0:
+            pass
+        else:
+            find_filter["complete_status"] = complete_status
 
     if not limit:
         limit = 100
