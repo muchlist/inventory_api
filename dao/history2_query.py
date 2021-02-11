@@ -44,7 +44,7 @@ def find_histories_by_branch_by_category(branch: str,
     if category:
         find_filter["category"] = category.upper()
 
-    if complete_status:
+    if complete_status or complete_status == 0:
         if complete_status < 0:
             pass
         else:
