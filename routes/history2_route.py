@@ -135,7 +135,7 @@ def insert_history(parent_id):
                 parent_name = parent["handheld_name"]
 
         if data["category"] == "DAILY":
-            parent_name = claims["name"] + " DAILY"
+            parent_name = "GENERAL"
             parent_id = get_jwt_identity()
 
         history_dto = HistoryDto2(
