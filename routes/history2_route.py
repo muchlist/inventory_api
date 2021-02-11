@@ -78,12 +78,16 @@ def insert_history(parent_id):
         parent_name = "UNKNOWN"
         if data["complete_status"] < 2:
             # Jika historynya !complete / (complete_status == 0) / (complete_status == 1) masukkan kedalam case
+            case = f'{data["status"]} : {data["note"]}'
+            if data["complete_status"] == 1:
+                case = f'##PENDING## {data["status"]} : {data["note"]}'
+
             if data["category"] == "PC":
                 parent = computer_update.insert_case_computer(
                     parent_id,
                     claims["branch"],
                     str(history_id),
-                    f'{data["status"]} : {data["note"]}'
+                    case
                 )
                 if parent is None:
                     return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
@@ -93,7 +97,7 @@ def insert_history(parent_id):
                 parent = cctv_update.insert_case_cctv(parent_id,
                                                       claims["branch"],
                                                       str(history_id),
-                                                      f'{data["status"]} : {data["note"]}'
+                                                      case
                                                       )
                 if parent is None:
                     return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
@@ -103,7 +107,7 @@ def insert_history(parent_id):
                 parent = handheld_update.insert_case_handheld(parent_id,
                                                               claims["branch"],
                                                               str(history_id),
-                                                              f'{data["status"]} : {data["note"]}')
+                                                              case)
                 if parent is None:
                     return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
                 parent_name = parent["handheld_name"]
@@ -317,8 +321,8 @@ def delete_history(history_id):
         if history is None:
             return {"msg": "Gagal memperbarui riwayat, kesalahan pada cabang atau timestamp"}, 400
 
-        # Jika history complete_status belum 2 (komplete) maka berarti harus dihapus di parrentnya
-        if history["complete_status"] < 2:
+        # Jika history complete_status 2 (komplete) maka berarti harus dihapus di parrentnya
+        if history["complete_status"] == 2:
             if history["category"] == "PC":
                 parent = computer_update.delete_case_computer(
                     history["parent_id"],
@@ -346,6 +350,62 @@ def delete_history(history_id):
                 )
                 if parent is None:
                     return {"msg": "Case pada parent tidak terhapus"}, 500
+
+        # Jika history complete_status != 2 (tidak komplete) maka berarti
+        # harus dihapus lalu ditambahkan lagi di parrentnya
+        else:
+            case = f'{data["status"]} : {data["note"]}'
+            if data["complete_status"] == 1:
+                case = f'##PENDING## {data["status"]} : {data["note"]}'
+
+            if history["category"] == "PC":
+                parent = computer_update.delete_case_computer(
+                    history["parent_id"],
+                    claims["branch"],
+                    history_id,
+                )
+                if parent is None:
+                    return {"msg": "Case pada parent tidak terhapus"}, 500
+
+                computer_update.insert_case_computer(
+                    history["parent_id"],
+                    claims["branch"],
+                    str(history_id),
+                    case
+                )
+
+            if history["category"] == "CCTV":
+                parent = cctv_update.delete_case_cctv(
+                    history["parent_id"],
+                    claims["branch"],
+                    history_id,
+                )
+
+                if parent is None:
+                    return {"msg": "Case pada parent tidak terhapus"}, 500
+
+                cctv_update.insert_case_cctv(
+                    history["parent_id"],
+                    claims["branch"],
+                    str(history_id),
+                    case
+                )
+
+            if history["category"] == "HANDHELD":
+                parent = handheld_update.delete_case_handheld(
+                    history["parent_id"],
+                    claims["branch"],
+                    history_id,
+                )
+                if parent is None:
+                    return {"msg": "Case pada parent tidak terhapus"}, 500
+
+                handheld_update.insert_case_handheld(
+                    history["parent_id"],
+                    claims["branch"],
+                    str(history_id),
+                    case
+                )
 
         return jsonify(history), 200
 
