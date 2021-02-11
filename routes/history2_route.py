@@ -199,7 +199,7 @@ def get_history():
         except ValueError:
             return {"msg": "limit harus berupa angka"}, 400
 
-    if complete_status:
+    if complete_status or complete_status == 0:
         try:
             complete_status = int(complete_status)
         except ValueError:
