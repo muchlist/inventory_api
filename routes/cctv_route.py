@@ -172,7 +172,7 @@ def detail_cctvs(cctv_id):
                                    note="Detail cctv dirubah",
                                    duration=0,
                                    resolve_note="",
-                                   is_complete=True,
+                                   complete_status=2,
                                    created_at=datetime.now(),
                                    parent_id=result["_id"],
                                    parent_name=result["cctv_name"],

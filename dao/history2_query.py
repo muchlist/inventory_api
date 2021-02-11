@@ -34,17 +34,21 @@ def find_history_for_user(author_id: str, limit: int) -> list:
     return histories
 
 
-def find_histories_by_branch_by_category(branch: str, category: str, is_complete: int, limit: int) -> list:
+def find_histories_by_branch_by_category(branch: str,
+                                         category: str,
+                                         complete_status: int,
+                                         limit: int) -> list:
     find_filter = {}
     if branch:
         find_filter["branch"] = branch.upper()
     if category:
         find_filter["category"] = category.upper()
 
-    if is_complete == 0:
-        find_filter["is_complete"] = False
-    elif is_complete == 1:
-        find_filter["is_complete"] = True
+    if complete_status or complete_status == 0:
+        if complete_status < 0:
+            pass
+        else:
+            find_filter["complete_status"] = complete_status
 
     if not limit:
         limit = 100
@@ -60,14 +64,14 @@ def find_histories_by_branch_by_category(branch: str, category: str, is_complete
 
 def get_histories_in_progress_count(branch: str) -> list:
     find_filter = {
-        "is_complete": False
+        "complete_status": 0
     }
     if branch:
         find_filter["branch"] = branch.upper()
 
     pipeline = [
         {"$match": find_filter},
-        {"$group": {"_id": "$branch", "count": {"$sum" : 1}}},
+        {"$group": {"_id": "$branch", "count": {"$sum": 1}}},
         {"$sort": SON([("count", -1), ("_id", -1)])}
     ]
 

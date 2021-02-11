@@ -47,7 +47,9 @@ def find_check():
             type=data["type"],
             last_status="",
             shifts=data["shifts"],
-            note=data["note"]
+            note=data["note"],
+            tag_one=data["tag_one"],
+            tag_two=data["tag_two"]
         )
 
         try:
@@ -120,7 +122,9 @@ def detail_check_obj(chk_id):
             location=data["location"],
             note=data["note"],
             shifts=data["shifts"],
-            type=data["type"]
+            type=data["type"],
+            tag_one=data["tag_one"],
+            tag_two=data["tag_two"]
         )
 
         try:

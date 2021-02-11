@@ -45,7 +45,7 @@ def find_check():
             branch=claims["branch"],
             name="",
             obj_type="",
-            problem=0
+            problem=0  # select all, 1 just have problem
         )
         for obj in check_obj_list:
             # jika obj memiliki shift yang sama dengan shift request
@@ -59,10 +59,14 @@ def find_check():
                     checked_at=None,
                     checked_note=obj["checked_note"],
                     have_problem=obj["have_problem"],
-                    is_resolve=obj["is_resolve"],
+                    complete_status=obj["complete_status"],
                     location=obj["location"],
                     type=obj["type"],
                     image_path="",
+                    tag_one=obj["tag_one"],
+                    tag_two=obj["tag_two"],
+                    tag_one_selected="",
+                    tag_two_selected="",
                 )._asdict()
                 obj_embed_list.append(obj_embed)
 
@@ -75,10 +79,14 @@ def find_check():
                 checked_at=None,
                 checked_note="",
                 have_problem=True,
-                is_resolve=False,
+                complete_status=0,
                 location=cctv["location"],
                 type="CCTV",
                 image_path="",
+                tag_one=[],
+                tag_two=[],
+                tag_one_selected="",
+                tag_two_selected="",
             )._asdict()
             obj_embed_list.append(obj_cctv)
 
@@ -246,7 +254,9 @@ def update_child_check(check_id, child_id):
         is_checked = data["is_checked"]  # bool
         checked_note = data["checked_note"]  # str
         have_problem = data["have_problem"]  # bool
-        is_resolve = data["is_resolve"]  # bool
+        complete_status = data["complete_status"]  # int
+        tag_one_selected = data["tag_one_selected"]  # str
+        tag_two_selected = data["tag_two_selected"]  # str
 
         child_dto = CheckObjEmbedEditDto(
             filter_parent_id=check_id,
@@ -255,8 +265,10 @@ def update_child_check(check_id, child_id):
             checked_at=datetime.now(),
             is_checked=is_checked,
             have_problem=have_problem,
-            is_resolve=is_resolve,
+            complete_status=complete_status,
             checked_note=checked_note,
+            tag_one_selected=tag_one_selected,
+            tag_two_selected=tag_two_selected,
         )
 
         try:
@@ -276,9 +288,11 @@ def update_child_check(check_id, child_id):
                         updated_at=datetime.now(),
                         checked_note=checked_note,
                         have_problem=have_problem,
-                        is_resolve=is_resolve
+                        complete_status=complete_status
                     )
                 )
+            else:  # is cctv
+                pass  # todo cctv must be crazy
 
         return jsonify(result), 201
 

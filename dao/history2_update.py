@@ -24,7 +24,8 @@ def insert_history(history_id: ObjectId, data: HistoryDto2) -> str:
         "created_at": datetime.now(),
         "end_date": data.end_date,
         "location": data.location,
-        "is_complete": data.is_complete,
+        # "is_complete": data.is_complete,
+        "complete_status": data.complete_status,
         "duration_minute": data.duration,
         "resolve_note": data.resolve_note,
         "updated_by": data.updated_by,
@@ -39,7 +40,7 @@ def update_history(data: EditHistoryDto2) -> dict:
         "_id": ObjectId(data.filter_id),
         "branch": data.filter_branch,
         "timestamp": data.filter_timestamp,
-        "is_complete": False,
+        "complete_status": {"$ne": 2},  # 0 progress , 1 pending , 2 complete
     }
     update = {
         "status": data.status.upper(),
@@ -48,7 +49,8 @@ def update_history(data: EditHistoryDto2) -> dict:
         "end_date": data.end_date,
         "timestamp": datetime.now(),  # updated_at
         "location": data.location,
-        "is_complete": data.is_complete,
+        # "is_complete": data.is_complete,
+        "complete_status": data.complete_status,
         "duration_minute": data.duration,
         "resolve_note": data.resolve_note,
         "updated_by": data.updated_by,

@@ -14,5 +14,8 @@ class CheckEditSchema(Schema):
 class CheckEmbedChildSchema(Schema):
     is_checked = fields.Bool(required=True)
     checked_note = fields.Str(required=True)
-    is_resolve = fields.Bool(required=True)
+    # is_resolve = fields.Bool(required=True)
+    complete_status = fields.Int(required=True)
     have_problem = fields.Bool(required=True)
+    tag_one_selected = fields.Str(required=True)
+    tag_two_selected = fields.Str(required=True)

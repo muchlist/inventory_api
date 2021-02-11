@@ -9,7 +9,8 @@ class HistoryInsertSchema(Schema):
     date = fields.DateTime(required=False)
     end_date = fields.DateTime(required=False, allow_none=True)
     resolve_note = fields.Str(required=True)
-    is_complete = fields.Bool(required=True)
+    # is_complete = fields.Bool(required=True)
+    complete_status = fields.Int(required=True)
 
 
 class HistoryEditSchema(Schema):
@@ -20,6 +21,7 @@ class HistoryEditSchema(Schema):
     date = fields.DateTime(required=False)
     end_date = fields.DateTime(required=True)
     resolve_note = fields.Str(required=True)
-    is_complete = fields.Bool(required=True)
+    # is_complete = fields.Bool(required=True)
+    complete_status = fields.Int(required=True)
 
     timestamp = fields.DateTime(required=True)

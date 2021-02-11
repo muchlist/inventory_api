@@ -21,7 +21,12 @@ _CHECKS_OBJ__CHECKED_AT = "checks_obj.$.checked_at"
 _CHECKS_OBJ__IS_CHECKED = "checks_obj.$.is_checked"
 _CHECKS_OBJ__CHECKED_NOTE = "checks_obj.$.checked_note"
 _CHECKS_OBJ__HAVE_PROBLEM = "checks_obj.$.have_problem"
-_CHECKS_OBJ__IS_RESOLVE = "checks_obj.$.is_resolve"
+# _CHECKS_OBJ__IS_RESOLVE = "checks_obj.$.is_resolve"
+_CHECKS_OBJ__COMPLETE_STATUS = "checks_obj.$.complete_status"
+_CHECKS_OBJ__TAG_ONE = "checks_obj.$.tag_one"
+_CHECKS_OBJ__TAG_TWO = "checks_obj.$.tag_two"
+_CHECKS_OBJ__TAG_ONE_SELECTED = "checks_obj.$.tag_one_selected"
+_CHECKS_OBJ__TAG_TWO_SELECTED = "checks_obj.$.tag_two_selected"
 
 
 def create_check(data: CheckDto) -> dict:
@@ -110,7 +115,10 @@ def update_child_check_data(data: CheckObjEmbedEditDto) -> dict:
         _CHECKS_OBJ__CHECKED_AT: data.checked_at,
         _CHECKS_OBJ__CHECKED_NOTE: data.checked_note,
         _CHECKS_OBJ__HAVE_PROBLEM: data.have_problem,
-        _CHECKS_OBJ__IS_RESOLVE: data.is_resolve
+        # _CHECKS_OBJ__IS_RESOLVE: data.is_resolve,
+        _CHECKS_OBJ__COMPLETE_STATUS: data.complete_status,
+        _CHECKS_OBJ__TAG_ONE_SELECTED: data.tag_one_selected,
+        _CHECKS_OBJ__TAG_TWO_SELECTED: data.tag_two_selected,
     }
 
     check = mongo.db.check.find_one_and_update(find, {'$set': update}, return_document=True)

@@ -76,13 +76,18 @@ def insert_history(parent_id):
         history_id = ObjectId()
 
         parent_name = "UNKNOWN"
-        if not data["is_complete"]:
+        if data["complete_status"] < 2:
+            # Jika historynya !complete / (complete_status == 0) / (complete_status == 1) masukkan kedalam case
+            case = f'{data["status"]} : {data["note"]}'
+            if data["complete_status"] == 1:
+                case = f'##PENDING## {data["status"]} : {data["note"]}'
+
             if data["category"] == "PC":
                 parent = computer_update.insert_case_computer(
                     parent_id,
                     claims["branch"],
                     str(history_id),
-                    f'{data["status"]} : {data["note"]}'
+                    case
                 )
                 if parent is None:
                     return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
@@ -92,7 +97,7 @@ def insert_history(parent_id):
                 parent = cctv_update.insert_case_cctv(parent_id,
                                                       claims["branch"],
                                                       str(history_id),
-                                                      f'{data["status"]} : {data["note"]}'
+                                                      case
                                                       )
                 if parent is None:
                     return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
@@ -102,13 +107,14 @@ def insert_history(parent_id):
                 parent = handheld_update.insert_case_handheld(parent_id,
                                                               claims["branch"],
                                                               str(history_id),
-                                                              f'{data["status"]} : {data["note"]}')
+                                                              case)
                 if parent is None:
                     return {"msg": "History parent tidak ditemukan atau berbeda cabang"}, 400
                 parent_name = parent["handheld_name"]
         else:
 
-            """jika tidak IS_COMPLETE maka menemukan parent_name harus di get"""
+            """jika tidak complete_status = 2 maka tidak perlu menambahkan case
+               sehingga menemukan parent_name harus di get"""
 
             if data["category"] == "PC":
                 parent = computer_query.get_computer(parent_id)
@@ -129,7 +135,7 @@ def insert_history(parent_id):
                 parent_name = parent["handheld_name"]
 
         if data["category"] == "DAILY":
-            parent_name = claims["name"] + " DAILY"
+            parent_name = "GENERAL"
             parent_id = get_jwt_identity()
 
         history_dto = HistoryDto2(
@@ -147,7 +153,7 @@ def insert_history(parent_id):
             parent_name=parent_name,
             duration=duration,
             resolve_note=data["resolve_note"],
-            is_complete=data["is_complete"],
+            complete_status=data["complete_status"],
             category=data["category"],
             updated_by=claims["name"],
             updated_by_id=get_jwt_identity(),
@@ -185,7 +191,7 @@ api.com/histories?category=PC&branch=BAGENDANG
 def get_history():
     category = request.args.get("category")
     limit = request.args.get("limit")
-    is_complete = request.args.get("is_complete")
+    complete_status = request.args.get("complete_status")
 
     if limit:
         try:
@@ -193,13 +199,11 @@ def get_history():
         except ValueError:
             return {"msg": "limit harus berupa angka"}, 400
 
-    if is_complete:
+    if complete_status or complete_status == 0:
         try:
-            is_complete = int(is_complete)
+            complete_status = int(complete_status)
         except ValueError:
-            return {"msg": "is_complete harus berupa angka"}, 400
-    else:
-        is_complete = 100  # selain 0 dan 1 berarti semuanya
+            return {"msg": "complete_status harus berupa angka"}, 400
 
     """
         Jika cabang luar kalimantan di includekan ke aplikasi maka filter by branch harus dijadikan
@@ -212,7 +216,10 @@ def get_history():
 
     # histories = history_query.find_histories_by_branch_by_category(branch, category, limit)
     try:
-        histories = history2_query.find_histories_by_branch_by_category(branch, category, is_complete, limit)
+        histories = history2_query.find_histories_by_branch_by_category(branch=branch,
+                                                                        category=category,
+                                                                        complete_status=complete_status,
+                                                                        limit=limit)
     except:
         return {"msg": "Gagal memanggil data dari database"}, 500
 
@@ -301,7 +308,7 @@ def delete_history(history_id):
             note=data["note"],
             duration=duration,
             resolve_note=data["resolve_note"],
-            is_complete=data["is_complete"],
+            complete_status=data["complete_status"],
             updated_by=claims["name"],
             updated_by_id=get_jwt_identity(),
         )
@@ -314,8 +321,8 @@ def delete_history(history_id):
         if history is None:
             return {"msg": "Gagal memperbarui riwayat, kesalahan pada cabang atau timestamp"}, 400
 
-        # Jika history komplete, berarti harus dihapus di parrentnya karena masih nyantol
-        if history["is_complete"]:
+        # Jika history complete_status 2 (komplete) maka berarti harus dihapus di parrentnya
+        if history["complete_status"] == 2:
             if history["category"] == "PC":
                 parent = computer_update.delete_case_computer(
                     history["parent_id"],
@@ -344,6 +351,62 @@ def delete_history(history_id):
                 if parent is None:
                     return {"msg": "Case pada parent tidak terhapus"}, 500
 
+        # Jika history complete_status != 2 (tidak komplete) maka berarti
+        # harus dihapus lalu ditambahkan lagi di parrentnya
+        else:
+            case = f'{data["status"]} : {data["note"]}'
+            if data["complete_status"] == 1:
+                case = f'##PENDING## {data["status"]} : {data["note"]}'
+
+            if history["category"] == "PC":
+                parent = computer_update.delete_case_computer(
+                    history["parent_id"],
+                    claims["branch"],
+                    history_id,
+                )
+                if parent is None:
+                    return {"msg": "Case pada parent tidak terhapus"}, 500
+
+                computer_update.insert_case_computer(
+                    history["parent_id"],
+                    claims["branch"],
+                    str(history_id),
+                    case
+                )
+
+            if history["category"] == "CCTV":
+                parent = cctv_update.delete_case_cctv(
+                    history["parent_id"],
+                    claims["branch"],
+                    history_id,
+                )
+
+                if parent is None:
+                    return {"msg": "Case pada parent tidak terhapus"}, 500
+
+                cctv_update.insert_case_cctv(
+                    history["parent_id"],
+                    claims["branch"],
+                    str(history_id),
+                    case
+                )
+
+            if history["category"] == "HANDHELD":
+                parent = handheld_update.delete_case_handheld(
+                    history["parent_id"],
+                    claims["branch"],
+                    history_id,
+                )
+                if parent is None:
+                    return {"msg": "Case pada parent tidak terhapus"}, 500
+
+                handheld_update.insert_case_handheld(
+                    history["parent_id"],
+                    claims["branch"],
+                    str(history_id),
+                    case
+                )
+
         return jsonify(history), 200
 
     if request.method == 'DELETE':
@@ -359,7 +422,7 @@ def delete_history(history_id):
             return {"msg": "Gagal menghapus riwayat, batas waktu 24 jam telah tercapai !"}, 400
 
         # Jika history belum komplete, berarti harus dihapus di parrentnya karena masih nyantol
-        if not history["is_complete"]:
+        if history["complete_status"] < 2:
             if history["category"] == "PC":
                 parent = computer_update.delete_case_computer(
                     history["parent_id"],
@@ -414,7 +477,7 @@ def get_history_for_dashboard():
         branch = request.args.get("branch")
 
     progress_count = history2_query.get_histories_in_progress_count(branch)
-    histories = history2_query.find_histories_by_branch_by_category(branch, "", 100, 2)
+    histories = history2_query.find_histories_by_branch_by_category(branch, "", -1, 3)
     option_lvl = options_json_object["version"]
 
     return {"issues": progress_count, "histories": histories, "option_lvl": option_lvl}, 200
